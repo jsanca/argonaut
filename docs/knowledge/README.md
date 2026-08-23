@@ -13,3 +13,7 @@ Domain definitions, actors, entities, workflows, business rules, terminology, co
 ## What does not belong here
 
 Task reports, implementation logs, review results, temporary investigation notes, Architecture Decision Records, future plans, or unverified conclusions. Keep execution history in `../engineering/`.
+
+## Articles
+
+- [Five Ways to Build the Same AI Capability](articles/UC-ARTICLE-001-five-ways-to-build-the-same-ai-capability.md) - an evidence-bounded explanation of UC-001's five JVM execution models for senior engineers and architects.

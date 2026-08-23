@@ -1,0 +1,30 @@
+id: ux-design-review
+display_name: UX Design Review
+domain: cross-stack
+kind: review
+modes:
+  - planning
+status: active
+summary: Review user flows, heuristics, IA, content, and UI states before or after implementation.
+areas:
+  - frontend
+  - architecture
+  - code-quality
+tags:
+  - cross-stack
+  - ux
+  - design
+  - accessibility
+collections:
+  - architecture
+packs:
+  - architecture-review-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

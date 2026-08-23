@@ -1,0 +1,30 @@
+id: ui-design-system-review
+display_name: UI Design System Review
+domain: cross-stack
+kind: review
+modes:
+  - planning
+status: active
+summary: Review design tokens, spacing, typography, components, and visual consistency across a product UI.
+areas:
+  - frontend
+  - architecture
+  - code-quality
+tags:
+  - cross-stack
+  - ui
+  - design-system
+  - tailwind
+collections:
+  - architecture
+packs:
+  - architecture-review-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

@@ -1,0 +1,30 @@
+id: java-security-hardening
+display_name: Java Security Hardening
+domain: java
+kind: security
+modes:
+  - planning
+  - coding
+status: active
+summary: Secure implementation and review patterns for Java and Spring Boot applications.
+areas:
+  - backend
+  - security
+  - testing
+tags:
+  - java
+  - security
+  - hardening
+collections:
+  - java
+packs:
+  - java-backend-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

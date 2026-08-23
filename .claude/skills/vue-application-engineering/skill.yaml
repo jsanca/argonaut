@@ -1,0 +1,28 @@
+id: vue-application-engineering
+display_name: Vue Application Engineering
+domain: vue
+kind: framework
+modes:
+  - coding
+status: active
+summary: SFC script setup, routing, forms, and maintainable Vue application structure.
+areas:
+  - frontend
+  - code-quality
+tags:
+  - vue
+  - application
+  - frontend
+collections:
+  - vue
+packs:
+  - frontend-vue-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

@@ -1,0 +1,30 @@
+id: vue-testing-verification
+display_name: Vue Testing Verification
+domain: vue
+kind: testing
+modes:
+  - planning
+  - coding
+status: active
+summary: User-centric Vue tests with vue-test-utils, Vitest, and MSW.
+areas:
+  - frontend
+  - testing
+tags:
+  - vue
+  - testing
+  - vitest
+  - frontend
+collections:
+  - vue
+packs:
+  - frontend-vue-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

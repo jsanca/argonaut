@@ -1,0 +1,33 @@
+id: vue-quality-gates
+display_name: Vue Quality Gates
+domain: vue
+kind: delivery
+modes:
+  - planning
+  - coding
+status: active
+summary: Define and enforce Vue CI quality gates — ESLint, Prettier, vue-tsc, Vitest, and coverage thresholds.
+areas:
+  - frontend
+  - code-quality
+  - testing
+tags:
+  - vue
+  - ci
+  - quality-gates
+  - eslint
+  - typescript
+  - vitest
+collections:
+  - vue
+packs:
+  - frontend-vue-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

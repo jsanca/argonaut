@@ -1,0 +1,29 @@
+id: java-ai-backend-engineering
+display_name: Java AI Backend Engineering
+domain: java
+kind: ai-engineering
+modes:
+  - planning
+  - coding
+status: active
+summary: Build Spring Boot AI features with RAG ports, tools, guardrails, and audit.
+areas:
+  - backend
+  - ai-engineering
+tags:
+  - java
+  - ai-engineering
+  - spring-boot
+collections:
+  - java
+packs:
+  - java-backend-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

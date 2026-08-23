@@ -1,0 +1,30 @@
+id: java-spring-boot-service
+display_name: Java Spring Boot Service
+domain: java
+kind: framework
+modes:
+  - coding
+status: active
+summary: Build, review, refactor, and test production-grade Spring Boot services.
+areas:
+  - backend
+  - api-design
+  - testing
+  - observability
+tags:
+  - java
+  - spring-boot
+  - rest-api
+collections:
+  - java
+packs:
+  - java-backend-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

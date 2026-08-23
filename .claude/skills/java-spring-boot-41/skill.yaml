@@ -1,0 +1,32 @@
+id: java-spring-boot-41
+display_name: Java Spring Boot 4.1
+domain: java
+kind: version
+modes:
+  - coding
+status: active
+summary: Upgrade to or build on Spring Boot 4.1 with Spring Framework 7.0.8+, Spring Security 7.1, gRPC support, hardened HTTP clients, and observability improvements on a Boot 4.0 baseline.
+areas:
+  - backend
+  - versions
+  - observability
+  - security
+tags:
+  - java
+  - spring-boot
+  - 4.1
+  - spring-framework-7
+  - grpc
+collections:
+  - java
+packs:
+  - java-backend-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

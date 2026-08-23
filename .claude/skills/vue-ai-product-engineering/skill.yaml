@@ -1,0 +1,29 @@
+id: vue-ai-product-engineering
+display_name: Vue AI Product Engineering
+domain: vue
+kind: ai-engineering
+modes:
+  - planning
+  - coding
+status: active
+summary: Build Vue chat and streaming AI UX with citations, safety, and accessibility.
+areas:
+  - frontend
+  - ai-engineering
+tags:
+  - vue
+  - ai-engineering
+  - frontend
+collections:
+  - vue
+packs:
+  - frontend-vue-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

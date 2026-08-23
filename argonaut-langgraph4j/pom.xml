@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>dev.jsanca.argonaut</groupId>
+        <artifactId>argonaut-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>argonaut-langgraph4j</artifactId>
+    <name>Argonaut LangGraph4j</name>
+    <description>LangGraph4j implementation of the Argonaut agentic mission (port 8083)</description>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>4.1.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Argonaut shared contracts -->
+        <dependency>
+            <groupId>dev.jsanca.argonaut</groupId>
+            <artifactId>argonaut-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- LangGraph4j graph engine -->
+        <dependency>
+            <groupId>org.bsc.langgraph4j</groupId>
+            <artifactId>langgraph4j-core</artifactId>
+            <version>1.8.24</version>
+        </dependency>
+
+        <!--
+            LangGraph4j LangChain4j integration:
+            brings LC4jToolService, LC4jToolMapBuilder, and langchain4j:1.18.1 transitively.
+            Note: langchain4j 1.x renamed ChatLanguageModel → ChatModel and introduced
+            ChatRequest/ChatResponse. These are distinct from langchain4j 0.36.2 used in
+            argonaut-langchain4j — separate module classpaths, no conflict.
+        -->
+        <dependency>
+            <groupId>org.bsc.langgraph4j</groupId>
+            <artifactId>langgraph4j-langchain4j</artifactId>
+            <version>1.8.24</version>
+        </dependency>
+
+        <!--
+            Force langchain4j-core to 1.18.1 so it is not downgraded to 1.0.0 by the
+            langchain4j-open-ai transitive pull (nearest-wins rule). InvocationContext and
+            other types used by LC4jToolService live in langchain4j-core >= 1.18.x.
+        -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-core</artifactId>
+            <version>1.18.1</version>
+        </dependency>
+
+        <!-- LangChain4j OpenAI provider — OpenAiChatModel pointing at OpenRouter -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-open-ai</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- Spring Boot web layer for REST controllers and HTTP contract -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- Required for LC4j @Tool parameter binding via reflection -->
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>4.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -43,18 +43,6 @@ public class ControlledLocalEvidenceAgent {
 
     static final String FRAMEWORK_ID = "spring-ai";
 
-    private static final String SYSTEM_PROMPT = """
-            You are an expert on agentic AI framework design. Answer the user's question using
-            ONLY evidence from the knowledge corpus tools provided.
-
-            Strategy:
-            1. Use searchKnowledge to find relevant documents (issue at least two searches).
-            2. Use readDocument to read each relevant document in full.
-            3. Synthesize a comprehensive answer grounded in the retrieved evidence.
-
-            Do not use any knowledge outside of what the tools provide.
-            """;
-
     private final ChatClient chatClient;
     private final KnowledgeTool knowledgeTool;
 
@@ -75,7 +63,7 @@ public class ControlledLocalEvidenceAgent {
         try {
 
             final String answer = chatClient.prompt()
-                    .system(SYSTEM_PROMPT)
+                    .system(ControlledLocalEvidencePrompt.SYSTEM_PROMPT)
                     .user(request.question())
                     .tools(knowledgeTool)
                     .toolContext(Map.of("observer", observer, "reads", reads))

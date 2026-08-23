@@ -1,0 +1,30 @@
+id: java-concurrency-reliability
+display_name: Java Concurrency and Reliability
+domain: java
+kind: diagnostic
+modes:
+  - planning
+  - coding
+status: active
+summary: Thread pools, async work, locking, timeouts, and reliability patterns for Java services.
+areas:
+  - backend
+  - concurrency
+  - performance
+tags:
+  - java
+  - concurrency
+  - reliability
+collections:
+  - java
+packs:
+  - java-backend-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

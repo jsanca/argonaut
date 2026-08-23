@@ -1,0 +1,29 @@
+id: vue-state-management
+display_name: Vue State Management
+domain: vue
+kind: framework
+modes:
+  - coding
+status: active
+summary: Local, URL, server, Pinia, and composable state patterns for Vue applications.
+areas:
+  - frontend
+  - code-quality
+tags:
+  - vue
+  - state
+  - pinia
+  - frontend
+collections:
+  - vue
+packs:
+  - frontend-vue-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

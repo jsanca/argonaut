@@ -90,4 +90,5 @@ Skills: `.osk/skills/` is authoritative; tool copies under `.claude/skills/` and
 - [Verification Engineering](.osk/skills/osk-verification-engineering/SKILL.md)
 - [Knowledge Curator](.osk/skills/osk-knowledge-curator/SKILL.md)
 - [Adversarial Analysis](.osk/skills/osk-adversarial-analysis/SKILL.md)
+- [Agent Harness Guide](.osk/skills/osk-agent-harness-guide/SKILL.md)
 <!-- OSK:SKILLS:END -->

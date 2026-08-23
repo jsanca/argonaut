@@ -2,19 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Start with [docs/PROJECT.md](docs/PROJECT.md) to understand the project, then read [docs/OSK.md](docs/OSK.md) before creating or changing workspace documentation.
+Read [docs/OSK.md](docs/OSK.md) before creating or changing workspace documentation. `docs/PROJECT.md` is stale (pre-implementation era) — use `docs/engineering/ENGINEERING_LOG.md` for current state.
 
 Use canonical project documentation as the authority. Do not place shared project knowledge exclusively in this file.
 
 <!-- OSK:BEGIN -->
-
-## OSK Workspace
-
-Read:
-
-- `docs/PROJECT.md`
-- `docs/OSK.md`
-
 <!-- OSK:END -->
 
 ## Tool-Specific Instructions
@@ -62,8 +54,22 @@ argonaut-spring-ai    — Spring AI service, port 8081
 argonaut-langchain4j  — LangChain4j service, port 8082
 argonaut-langgraph4j  — LangGraph4j service, port 8083
 argonaut-embabel      — Embabel service, port 8084
+argonaut-koog         — Koog service, port 8085 (Kotlin)
 argonaut-ui/          — Vue.js experiment console (not a Maven module)
+libs-code/            — locally-cloned framework sources (e.g. langgraph4j); not built by Maven
 ```
+
+### Implementation status
+
+| Module | Framework version | Status | Tests |
+| --- | --- | --- | --- |
+| `argonaut-spring-ai` | Spring AI 2.0.0 + Spring Boot 4.1.0 | Complete | 4 (TC-UC-001) |
+| `argonaut-langchain4j` | LangChain4j 0.36.2 + Spring Boot 4.1.0 | Complete | 9 (TC-UC-001) |
+| `argonaut-langgraph4j` | LangGraph4j 1.8.24 + LangChain4j 1.18.1 + Spring Boot 4.1.0 | Complete | 12 (TC-UC-001) |
+| `argonaut-koog` | Koog 1.1.1 + Spring Boot 4.1.0 (Kotlin 2.3.21) | Complete | 12 (TC-UC-001) |
+| `argonaut-embabel` | Embabel 1.5.0 + Spring Boot 4.1.0 | Complete | 8 (TC-UC-001) |
+
+A clean `mvn verify` produces **156 tests** (111 core + 4 Spring AI + 9 LangChain4j + 12 LangGraph4j + 12 Koog + 8 Embabel).
 
 ### The non-negotiable boundary rule
 
@@ -78,17 +84,20 @@ The rule in one line: **share contracts, tools, fixtures, and observability stru
 
 | Package | Key types |
 | --- | --- |
-| `experiment` | `ExperimentRequest`, `ExperimentResult`, `ArgonautInfo`, `RunStatus` |
+| `experiment` | `ExperimentRequest`, `ExperimentResult`, `ArgonautInfo`, `RunStatus`, `ControlledLocalEvidencePrompt` |
 | `evidence` | `Evidence`, `EvidenceKind` |
-| `knowledge` | `KnowledgeRepository` (interface), request/response/result records, `DocumentReference/Content` |
+| `knowledge` | `KnowledgeRepository` (interface), request/response/result records, `DocumentReference/Content`, `KnowledgeSourceException` |
+| `knowledge.local` | `LocalKnowledgeRepository`, `LocalKnowledgeCorpus`, `LocalKnowledgeDocument`, `MarkdownCorpusLoader` |
 | `trace` | `ExecutionTrace`, `ExecutionEvent`, `ExecutionEventType` (19 event types) |
 | `observability` | `ExecutionObserver`, `NoopExecutionObserver`, `InMemoryExecutionObserver`, `CompositeExecutionObserver` |
 | `metrics` | `ExecutionMetrics`, `ExecutionMetrics.Builder` |
 | `error` | `ArgonautError`, `ArgonautErrorCode` |
+| `testing` | `ControlledLocalEvidenceContract`, `ExperimentExecutor`, `TraceEventMetadata` |
 
-### Common HTTP contract (intended, not yet implemented)
+### Common HTTP contract
 
-All framework services will implement:
+Implemented in `argonaut-spring-ai`, `argonaut-langchain4j`, `argonaut-langgraph4j`, and `argonaut-koog`; pending for `argonaut-embabel`.
+
 ```
 GET  /api/health
 GET  /api/about       → ArgonautInfo
@@ -115,6 +124,40 @@ Body content here.
 ```
 
 `id` and `title` are required. `LocalKnowledgeCorpus.demo()` / `LocalKnowledgeRepository.withDemoCorpus()` loads all `.md` files from this classpath directory. Framework config classes use `LocalKnowledgeRepository.withDemoCorpus()` to expose a `KnowledgeRepository` bean. The primary required evidence document is `exp-001`.
+
+### Per-framework implementation differences
+
+These are key differences discovered during implementation — not in the general pattern below.
+
+| Concern | Spring AI | LangChain4j | LangGraph4j | Koog | Embabel |
+| --- | --- | --- | --- | --- | --- |
+| Tool loop | Hidden in `ChatClient` | Hidden in `AiServices` | Explicit graph edges | Hidden in `singleRunStrategy` | **No LLM tool loop** — planner drives retrieval via Java |
+| Per-run state injection | `ToolContext` side-channel | Constructor + per-run `AiServices.build()` | Node closure capture | Constructor + per-run `AIAgent` | Local vars in `@Action` method |
+| `modelCalls` accuracy | Hard-coded `1` | `0` (loop opaque) | Accurate (`AtomicInteger`) | Accurate (`AtomicInteger` via `handleEvents`) | Hard-coded `1` (synthesis only) |
+| `MODEL_CALL_STARTED/COMPLETED` | Not observable | Not observable | First to emit | Also emits via `handleEvents` | Not emitted (synthesis only, no loop) |
+| Mock interface | `ChatModel` | `ChatLanguageModel` | `ChatModel` (LangChain4j 1.18.x) | `PromptExecutor` (Koog, via `MultiLLMPromptExecutor`) | `FakeOperationContext` (Embabel test) |
+| Language | Java | Java | Java | Kotlin | Java |
+
+**LangGraph4j-specific gotchas:**
+- `LC4jStateSerializer<>(MessagesState::new)` is required. The default `ObjectStreamStateSerializer` throws `NotSerializableException` at state-clone time because LangChain4j message types are not Java-Serializable.
+- `langchain4j-open-ai:1.0.0` (pulled transitively) downgrades `langchain4j-core` to `1.0.0`, breaking `InvocationContext` (only in ≥ 1.18.x). Fix: add explicit `langchain4j-core:1.18.1` direct dependency.
+
+**Koog-specific gotchas:**
+- `AIAgent.run()` and `AIAgent.close()` are Kotlin suspend functions — use `runBlocking { }` from synchronous Spring MVC handlers.
+- `koog-agents-jvm:1.1.1` pulls `kotlin-reflect:2.3.21` transitively. Pin `kotlin.version=2.3.21` (not 2.3.10) to avoid `NoClassDefFoundError: kotlin/jvm/internal/KotlinGenericDeclaration`.
+- `MockPromptExecutor` must override BOTH `resolveModel()` AND the `ResolvedModel`-based `execute()` overload. `ContextualPromptExecutor` (agent-internal) calls `resolveModel()` before `execute()` — overriding only the `LLModel`-based `execute()` won't intercept actual calls.
+- `OpenRouterLLMClient(apiKey)` is a Kotlin top-level factory function with `@file:JvmName("OpenRouterClientFactory")`. In Kotlin, call it directly: `OpenRouterLLMClient(apiKey = apiKey)`.
+- Kotlin `allopen/spring` plugin and `-java-parameters` compiler arg are both required.
+
+**Embabel-specific implementation findings:**
+- Uses a custom Maven repository: `https://repo.embabel.com/artifactory/libs-release`.
+- Minimal dependency: `embabel-agent-starter-openai` (provides platform + OpenAI-compatible LLM). `spring-boot-starter-web` added for REST. No `@EnableAgents` annotation needed — discovered via Spring Boot autoconfiguration.
+- **Planner-driven RAG**: Unlike other frameworks where the LLM drives tool calls (ReAct), Embabel's natural pattern separates retrieval (planner/Java code, deterministic) from synthesis (LLM). The `@AchievesGoal @Action` calls `KnowledgeRepository` directly and uses `context.ai().createObject()` only for synthesis.
+- **Testing without AgentPlatform**: `FakeOperationContext` (from `embabel-agent-test`) is passed directly to `@Action` methods — actions are plain Java methods callable without the full Embabel platform. Real `KnowledgeRepository` runs during tests; only the LLM synthesis step is mocked.
+- **Surefire reporting quirk**: JUnit 5 + Surefire 3.5.2 reports outer class `@Test` methods under the `$ActionShapeTests` nested class label (totaling 8 instead of the expected split of 4+4). The surefire XML confirms all 8 tests ran correctly.
+- Production invocation: `AgentInvocation.builder(agentPlatform).build(EvidenceAnswer.class).invoke(question)` drives the planner from a REST controller.
+
+---
 
 ### Framework implementation pattern
 

@@ -1,0 +1,32 @@
+id: java-quality-gates
+display_name: Java Quality Gates
+domain: java
+kind: delivery
+modes:
+  - planning
+  - coding
+status: active
+summary: Define and enforce Java CI quality gates with Gradle or Maven — tests, Checkstyle, SpotBugs, PMD, JaCoCo, Spotless, and enforcer rules.
+areas:
+  - backend
+  - code-quality
+  - testing
+tags:
+  - java
+  - ci
+  - quality-gates
+  - gradle
+  - maven
+collections:
+  - java
+packs:
+  - java-backend-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

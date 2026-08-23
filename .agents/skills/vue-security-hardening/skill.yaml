@@ -1,0 +1,29 @@
+id: vue-security-hardening
+display_name: Vue Security Hardening
+domain: vue
+kind: security
+modes:
+  - planning
+  - coding
+status: active
+summary: Harden Vue SPAs against XSS, unsafe HTML, token exposure, CSRF, and client-side secret leakage.
+areas:
+  - frontend
+  - security
+tags:
+  - vue
+  - security
+  - frontend
+collections:
+  - vue
+packs:
+  - frontend-vue-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

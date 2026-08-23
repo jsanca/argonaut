@@ -1,0 +1,29 @@
+id: java-25-lts
+display_name: Java 25 LTS
+domain: java
+kind: version
+modes:
+  - coding
+status: active
+summary: Adopt Java 25 LTS features and verify toolchain alignment, focusing on finalized language and library capabilities and safe migration from Java 21.
+areas:
+  - backend
+  - versions
+  - migrations
+tags:
+  - java
+  - "25"
+  - lts
+collections:
+  - java
+packs:
+  - java-backend-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

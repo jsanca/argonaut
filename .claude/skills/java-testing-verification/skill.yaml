@@ -1,0 +1,30 @@
+id: java-testing-verification
+display_name: Java Testing Verification
+domain: java
+kind: testing
+modes:
+  - planning
+  - coding
+status: active
+summary: Design, add, review, and improve Java test coverage and verification.
+areas:
+  - backend
+  - testing
+  - code-quality
+tags:
+  - java
+  - testing
+  - verification
+collections:
+  - java
+packs:
+  - java-backend-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

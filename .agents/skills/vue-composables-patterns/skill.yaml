@@ -1,0 +1,28 @@
+id: vue-composables-patterns
+display_name: Vue Composables Patterns
+domain: vue
+kind: framework
+modes:
+  - coding
+status: active
+summary: Composables for shared logic, watch, computed, and lifecycle cleanup in Vue 3.
+areas:
+  - frontend
+  - code-quality
+tags:
+  - vue
+  - composables
+  - frontend
+collections:
+  - vue
+packs:
+  - frontend-vue-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable

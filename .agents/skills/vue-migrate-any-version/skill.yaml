@@ -1,0 +1,30 @@
+id: vue-migrate-any-version
+display_name: Vue Migrate Any Version
+domain: vue
+kind: migration
+modes:
+  - planning
+  - coding
+status: active
+summary: Plan and execute Vue, router, Pinia, Vite, and ecosystem version migrations.
+areas:
+  - frontend
+  - migrations
+  - versions
+tags:
+  - vue
+  - migration
+  - versions
+collections:
+  - vue
+packs:
+  - frontend-vue-pack
+targets:
+  codex: true
+  cursor: true
+  copilot: true
+  claude: true
+  opencode: true
+owners:
+  - josalero
+stability: stable
