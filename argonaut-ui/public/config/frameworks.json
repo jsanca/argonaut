@@ -1,0 +1,9 @@
+{
+  "frameworks": [
+    { "id": "spring-ai",    "name": "Spring AI",    "baseUrl": "/api/frameworks/spring-ai", "enabled": true },
+    { "id": "langchain4j",  "name": "LangChain4j",  "baseUrl": "/api/frameworks/langchain4j", "enabled": true },
+    { "id": "langgraph4j",  "name": "LangGraph4j",  "baseUrl": "/api/frameworks/langgraph4j", "enabled": true },
+    { "id": "embabel",      "name": "Embabel",       "baseUrl": "/api/frameworks/embabel", "enabled": true },
+    { "id": "koog",         "name": "Koog",          "baseUrl": "/api/frameworks/koog", "enabled": true }
+  ]
+}

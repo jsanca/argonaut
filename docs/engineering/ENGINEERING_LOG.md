@@ -189,3 +189,11 @@ This is the stable active engineering log. Add concise, dated entries for materi
 **Evidence:** <Links to reports, reviews, commands, or artifacts.>
 
 **Open direction:** <Remaining uncertainty or next action; use None when none.>
+## 2026-08-23 — ARGONAUT-INFRA-001: Containerized UC-001 Laboratory
+
+**Type:** Infrastructure / deployment implementation
+**Input:** UC-001 framework services, Vue experiment console, common HTTP contract
+**Output:** Docker Compose laboratory for Spring AI, LangChain4j, LangGraph4j, Embabel, Koog, and nginx-hosted UI; reusable Java 25 backend Dockerfile; UI production image; same-origin framework routing; runtime registry; secret-free environment template; concise local-running documentation
+**Report:** [ARGONAUT-INFRA-001-containerized-uc001-lab.md](agents/reports/ARGONAUT-INFRA-001-containerized-uc001-lab.md)
+**Validation:** `mvn verify -q` passed (156 tests); `npm test` passed (19 tests); `npm run build` passed; `docker compose config --quiet` passed. Full Docker image build retry in progress after an interrupted Maven Central Kotlin compiler download.
+**Status:** In progress — awaiting Docker image and stack verification

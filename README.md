@@ -2,7 +2,7 @@
 
 > Same mission. Same model. Same evidence. Different agentic frameworks.
 
-Argonaut is a comparative laboratory that runs the same agentic mission through four distinct Java frameworks while keeping every external variable as controlled as practical.
+Argonaut is a comparative laboratory that runs the same agentic mission through five distinct Java frameworks while keeping every external variable as controlled as practical.
 
 The experiment asks: given identical inputs, identical controlled evidence, and identical evaluation expectations, how do different frameworks naturally express the same intelligent behavior?
 
@@ -14,8 +14,9 @@ The experiment asks: given identical inputs, identical controlled evidence, and 
 | LangChain4j | 8082 |
 | LangGraph4j | 8083 |
 | Embabel | 8084 |
+| Koog | 8085 |
 
-A fifth implementation — **Hybrid** — is reserved for after the first four have produced evidence. Its design will be informed by observed strengths and weaknesses, not predetermined.
+A future Hybrid implementation is reserved for after the five current implementations have produced evidence. Its design will be informed by observed strengths and weaknesses, not predetermined.
 
 ## What Stays Constant
 
@@ -39,7 +40,7 @@ The comparison is about how each framework naturally implements the same behavio
 
 Argonaut is a Maven multi-module project targeting Java 25. Each framework runs as an independent service. A Vue.js experiment console provides a framework-agnostic view of all running implementations.
 
-### Intended Module Layout
+### Module Layout
 
 ```
 argonaut-core           — shared contracts, evidence structures, execution traces, fixtures, evaluation utilities
@@ -47,6 +48,7 @@ argonaut-spring-ai      — Spring AI implementation (port 8081)
 argonaut-langchain4j    — LangChain4j implementation (port 8082)
 argonaut-langgraph4j    — LangGraph4j implementation (port 8083)
 argonaut-embabel        — Embabel implementation (port 8084)
+argonaut-koog           — Koog implementation (port 8085)
 argonaut-ui             — Vue.js experiment console
 ```
 
@@ -98,17 +100,19 @@ Observability is part of the experiment, not optional decoration. Each execution
 - what conclusion was reached
 - basic comparable metrics: duration, model calls, tool calls, steps, retries, and final status
 
-## Running Locally (intended)
+## Running Locally
 
-The project will provide a Docker Compose environment that starts all services and the Vue UI together. Configuration lives in `.env` (never committed). A versioned template captures the expected structure:
+The Docker Compose laboratory starts the five backend services and the production nginx-hosted Vue UI. Copy the template, add an OpenRouter key and model, then start the stack:
 
+```bash
+cp .env.example .env
+# Set OPENROUTER_API_KEY and OPENROUTER_MODEL in .env
+docker compose up --build
 ```
-# .env.example
-OPENROUTER_API_KEY=
-OPENROUTER_MODEL=
-```
 
-Additional runtime configuration per framework will be documented there as implementations are built.
+Open [http://localhost:8080](http://localhost:8080). The browser calls only same-origin paths such as `/api/frameworks/spring-ai/api/health`; nginx routes those requests to the corresponding backend. Provider credentials stay in backend containers and are never included in the frontend image or runtime registry.
+
+The UI remains usable when one or more frameworks are unavailable. Check stack state with `docker compose ps` and stop it with `docker compose down`.
 
 ## Project Documentation
 
@@ -121,6 +125,6 @@ Additional runtime configuration per framework will be documented there as imple
 
 ## Results and Article
 
-Experiment results, comparative conclusions, and the final article will appear here after all four implementations have been executed and evaluated against the same conditions.
+Experiment results, comparative conclusions, and the final article will appear here after all five implementations have been executed and evaluated against the same conditions.
 
 No winner is predetermined. The Hybrid implementation, if it materializes, will be designed from observed evidence — not from assumptions made before the experiment runs.

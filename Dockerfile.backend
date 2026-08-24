@@ -1,0 +1,43 @@
+# syntax=docker/dockerfile:1
+
+# Build one Spring Boot module from the shared Maven reactor. The MODULE build
+# argument is supplied by Docker Compose for each framework implementation.
+FROM maven:3.9-eclipse-temurin-25 AS build
+
+WORKDIR /workspace
+
+# Keep dependency resolution separate from source changes where possible while
+# retaining the complete reactor structure required by argonaut-core.
+COPY pom.xml ./
+COPY argonaut-core/pom.xml argonaut-core/pom.xml
+COPY argonaut-spring-ai/pom.xml argonaut-spring-ai/pom.xml
+COPY argonaut-langchain4j/pom.xml argonaut-langchain4j/pom.xml
+COPY argonaut-langgraph4j/pom.xml argonaut-langgraph4j/pom.xml
+COPY argonaut-embabel/pom.xml argonaut-embabel/pom.xml
+COPY argonaut-koog/pom.xml argonaut-koog/pom.xml
+# Resolve the full reactor once. MODULE is deliberately declared only after
+# this layer so the five service images share the same dependency cache.
+RUN --mount=type=cache,target=/root/.m2 mvn -B dependency:go-offline
+
+ARG MODULE
+COPY argonaut-core argonaut-core
+COPY argonaut-spring-ai argonaut-spring-ai
+COPY argonaut-langchain4j argonaut-langchain4j
+COPY argonaut-langgraph4j argonaut-langgraph4j
+COPY argonaut-embabel argonaut-embabel
+COPY argonaut-koog argonaut-koog
+RUN --mount=type=cache,target=/root/.m2 mvn -B -pl "${MODULE}" -am package -DskipTests
+COPY docker/HttpHealthcheck.java docker/HttpHealthcheck.java
+RUN javac -d /tmp/healthcheck docker/HttpHealthcheck.java
+
+FROM eclipse-temurin:25-jre
+
+ARG MODULE
+WORKDIR /app
+COPY --from=build /workspace/${MODULE}/target/${MODULE}-0.1.0-SNAPSHOT.jar /app/app.jar
+COPY --from=build /tmp/healthcheck /opt/healthcheck
+
+# Images contain no provider credentials. Compose supplies OpenRouter values
+# to backend containers only at runtime.
+USER 10001
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

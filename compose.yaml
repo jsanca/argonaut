@@ -1,0 +1,99 @@
+name: argonaut
+
+x-openrouter-environment: &openrouter-environment
+  OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+  OPENROUTER_MODEL: ${OPENROUTER_MODEL:-}
+  OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
+
+x-backend-healthcheck: &backend-healthcheck
+  test: ["CMD-SHELL", "exec java -cp /opt/healthcheck HttpHealthcheck http://localhost:$${SERVER_PORT}/api/health"]
+  interval: 10s
+  timeout: 3s
+  retries: 18
+  start_period: 30s
+
+x-backend: &backend
+  restart: unless-stopped
+  environment:
+    <<: *openrouter-environment
+
+services:
+  argonaut-spring-ai:
+    <<: *backend
+    image: argonaut/spring-ai:local
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      args: { MODULE: argonaut-spring-ai }
+    environment:
+      <<: *openrouter-environment
+      SERVER_PORT: 8081
+      SPRING_AI_PORT: 8081
+    healthcheck: *backend-healthcheck
+
+  argonaut-langchain4j:
+    <<: *backend
+    image: argonaut/langchain4j:local
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      args: { MODULE: argonaut-langchain4j }
+    environment:
+      <<: *openrouter-environment
+      SERVER_PORT: 8082
+      LANGCHAIN4J_PORT: 8082
+    healthcheck: *backend-healthcheck
+
+  argonaut-langgraph4j:
+    <<: *backend
+    image: argonaut/langgraph4j:local
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      args: { MODULE: argonaut-langgraph4j }
+    environment:
+      <<: *openrouter-environment
+      SERVER_PORT: 8083
+      LANGGRAPH4J_PORT: 8083
+    healthcheck: *backend-healthcheck
+
+  argonaut-embabel:
+    <<: *backend
+    image: argonaut/embabel:local
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      args: { MODULE: argonaut-embabel }
+    environment:
+      <<: *openrouter-environment
+      SERVER_PORT: 8084
+      EMBABEL_PORT: 8084
+    healthcheck: *backend-healthcheck
+
+  argonaut-koog:
+    <<: *backend
+    image: argonaut/koog:local
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      args: { MODULE: argonaut-koog }
+    environment:
+      <<: *openrouter-environment
+      SERVER_PORT: 8085
+      KOOG_PORT: 8085
+    healthcheck: *backend-healthcheck
+
+  argonaut-ui:
+    image: argonaut/ui:local
+    build:
+      context: ./argonaut-ui
+      dockerfile: Dockerfile
+    depends_on:
+      argonaut-spring-ai: { condition: service_started }
+      argonaut-langchain4j: { condition: service_started }
+      argonaut-langgraph4j: { condition: service_started }
+      argonaut-embabel: { condition: service_started }
+      argonaut-koog: { condition: service_started }
+    ports:
+      - "${ARGONAUT_UI_PORT:-8080}:80"
+    restart: unless-stopped

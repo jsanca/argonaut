@@ -1,0 +1,16 @@
+.git
+.agents
+.claude
+.codex
+.opencode
+.osk
+.idea
+.vscode
+**/.DS_Store
+**/target
+**/node_modules
+**/dist
+*.log
+.env
+libs-code
+docs/engineering/agents/checkpoints
