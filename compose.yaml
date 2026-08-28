@@ -83,6 +83,40 @@ services:
       KOOG_PORT: 8085
     healthcheck: *backend-healthcheck
 
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"   # REST
+      - "6334:6334"   # gRPC
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+  argonaut-vector:
+    image: argonaut/vector:local
+    build:
+      context: .
+      dockerfile: argonaut-vector/Dockerfile
+    environment:
+      ARGONAUT_VECTOR_PROVIDER: qdrant
+      ARGONAUT_VECTOR_QDRANT_HOST: qdrant
+      ARGONAUT_VECTOR_INTEGRALLIS_STORAGE_PATH: /data/integrallis
+      SERVER_PORT: 8086
+    ports:
+      - "8086:8086"
+    volumes:
+      - integrallis_data:/data/integrallis
+    depends_on:
+      qdrant:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "java", "-cp", "/opt/healthcheck", "HttpHealthcheck", "http://localhost:8086/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 24
+      start_period: 90s
+    restart: unless-stopped
+
   argonaut-ui:
     image: argonaut/ui:local
     build:
@@ -97,3 +131,7 @@ services:
     ports:
       - "${ARGONAUT_UI_PORT:-8080}:80"
     restart: unless-stopped
+
+volumes:
+  qdrant_data:
+  integrallis_data:

@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+results/in-memory/
+results/integrallis/
+results/qdrant/
+results/provider-comparison.txt

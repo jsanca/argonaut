@@ -1,0 +1,70 @@
+name: argonaut-vector
+
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"   # REST / dashboard
+      - "6334:6334"   # gRPC (used by argonaut-vector)
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+  argonaut-vector:
+    build:
+      context: ..
+      dockerfile: argonaut-vector/Dockerfile
+    image: argonaut/vector:local
+    environment:
+      #  environment:
+      #    SPRING_PROFILES_ACTIVE: qdrant        # remove this line for in_memory
+      #    ARGONAUT_VECTOR_QDRANT_HOST: qdrant   # remove this line for in_memory
+      #    ARGONAUT_VECTOR_PROVIDER: in_memory   # add this
+      #-----
+      #
+      #  argonaut-vector:
+      #    ...
+      #    environment:
+      #      ARGONAUT_VECTOR_PROVIDER: integrallis
+      #      ARGONAUT_VECTOR_INTEGRALLIS_STORAGE_PATH: /data/integrallis
+      #      SERVER_PORT: 8086
+      #    volumes:
+      #      - integrallis_data:/data/integrallis
+      #
+      #  And declare the volume at the bottom alongside qdrant_data:
+      #
+      #  volumes:
+      #    qdrant_data:
+      #    integrallis_data:
+      #
+      #  Without ARGONAUT_VECTOR_INTEGRALLIS_STORAGE_PATH (or with it set to empty string), Integrallis runs fully in-process — data is lost on container restart. With the volume
+      #  mount it persists.
+      #
+      #  You can also leave the qdrant service in the file; it just won't be used. Or drop it and its depends_on entry if you want a clean topology.
+      #
+      #  in_memory is even simpler — just:
+      #
+      #  environment:
+      #    ARGONAUT_VECTOR_PROVIDER: in_memory
+      #    SERVER_PORT: 8086
+      #
+      #  No volumes, no Qdrant, nothing else needed.
+      SPRING_PROFILES_ACTIVE: qdrant
+      # Override the host from application-qdrant.yml (localhost) to the Compose service name.
+      ARGONAUT_VECTOR_QDRANT_HOST: qdrant
+      SERVER_PORT: 8086
+    ports:
+      - "8086:8086"
+    depends_on:
+      qdrant:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "java", "-cp", "/opt/healthcheck", "HttpHealthcheck", "http://localhost:8086/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 24
+      start_period: 90s
+    restart: unless-stopped
+
+volumes:
+  qdrant_data:

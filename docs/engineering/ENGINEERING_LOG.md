@@ -2,6 +2,40 @@
 
 This is the stable active engineering log. Add concise, dated entries for material completed work, decisions, evidence, and open follow-up.
 
+## 2026-08-25 — Argonaut Vector Synthetic Corpus v0.1
+
+**Type:** Knowledge corpus / retrieval evaluation fixture
+**Input:** [Design and Create Argonaut Vector Synthetic Corpus v0.1 task](agents/tasks/ite-02/knowledge/Task-DesignAndCreateArgonautVectorSyntheticCorpusV0.1.md)
+**Output:** Backend-independent corpus at [docs/knowledge/vector-synthetic-corpus/v0.1/](../knowledge/vector-synthetic-corpus/v0.1/): 30 controlled Markdown documents, 25 golden JSONL queries, 59 graded qrels, scenario matrix, and design report. Includes exact identifiers, semantic paraphrases, acronyms, near duplicates, distractors, chunk-boundary material, typo/noise, distributed incident evidence, relevance grades, and one no-answer query.
+**Report:** [ask-DesignAndCreateArgonautVectorSyntheticCorpusV0.1-design-and-corpus.md](agents/reports/ask-DesignAndCreateArgonautVectorSyntheticCorpusV0.1-design-and-corpus.md)
+**Validation:** Repository-local structural validation passed: 30 unique docs, 25 unique queries, 59 valid non-duplicate qrels, and Q025 no-answer invariant. `git diff --check` found only pre-existing trailing whitespace in `.osk/workspace.yaml`.
+**Status:** Complete
+
+## 2026-08-24 — ARGONAUT-0.2-003: Common Vector Ports and First Backend Wiring
+
+**Type:** Implementation
+**Input:** ARGONAUT-0.2-002 retained knowledge; `../vectors/` (Integrallis 0.1.11); `../langchain4j/embeddings/`; Qdrant Java client 1.17.0
+**Output:** New `argonaut-vector` module (port 8086): domain records (`Document`, `Embedding`, `VectorDocument`, `SearchResult`, `SearchOptions`), port interfaces (`EmbeddingPort`, `StorePort`, `SearchPort`), `SemanticRepository`, ONNX `EmbeddingPort` adapter (MiniLM-L6-v2, 384-dim, full long-input partitioning), `InMemoryVectorAdapter`, `IntegrallisVectorAdapter` (HNSW/COSINE via `VectorCollection` directly), `QdrantVectorAdapter` (gRPC, `@ConditionalOnProperty`), `VectorProvider` enum, Spring DI strategy registry, REST API. Qdrant added to `compose.yaml`.
+**Key decisions:** No LangChain4j dependency in `argonaut-vector` — ONNX adapter uses `onnxruntime` + `ai.djl.huggingface:tokenizers` directly. InMemory adapter implemented from scratch (dot-product on L2-normalized vecs). Integrallis uses `VectorCollection` API directly, not `JavaVectorsEmbeddingStore`. `QdrantVectorAdapter` gated by `@ConditionalOnProperty` so Qdrant being down does not prevent other backends from functioning.
+**Architectural verdict:** The three-port contract (`EmbeddingPort` / `StorePort` / `SearchPort`) survives contact with all three backends without awkward adaptation. Minor friction: Integrallis commit semantics require batch `store()` override; Qdrant `ListenableFuture` requires sync `.get()` in the adapter. Neither affects the port shape.
+**Platform constraint (ONNX):** DJL 0.36.0 tokenizers lacks `osx-x86_64` native lib. ONNX tests skip on x86_64 JDK under Rosetta; pass with aarch64 JDK. Knowledge doc updated.
+**Validation:** `mvn verify -DskipTests` → BUILD SUCCESS (7 modules). `mvn test -pl argonaut-vector` → 13 tests: 9 pass (SemanticRepository 3, InMemory 4, Integrallis 2), 4 skip (ONNX/platform). Integrallis SIMD provider (Panama Vector API, 256-bit AVX2) confirmed active in test output.
+**Report:** [ARGONAUT-0.2-003-vector-ports-and-backend-wiring.md](agents/reports/ARGONAUT-0.2-003-vector-ports-and-backend-wiring.md)
+**Status:** Complete
+
+## 2026-08-24 — ARGONAUT-0.2-002: Vector Backend & Embedding Research
+
+**Type:** Research / knowledge retention
+**Input:** ARGONAUT-0.2-001 reconnaissance; local source inspection of `../vectors/` (Integrallis vectors 0.1.11) and `../langchain4j/embeddings/` (LangChain4j 1.20.0-beta30-SNAPSHOT)
+**Key finding — Integrallis Vectors:** Initial reconnaissance incorrectly suspected this was primarily a VCR/testing library. Source inspection shows a full embedded vector engine (FLAT, HNSW, Vamana, IVF_FLAT, IVF_PQ; 8 quantizers; SIMD via JDK Vector API; mmap persistence; metadata filtering). The `vectors-vcr-*` modules are an entirely separate test cassette recording/replay system, architecturally independent from `VectorCollection`. VectorCollection accepts externally supplied `float[]` vectors directly — no embedding model required.
+**Key finding — ONNX pipeline:** LangChain4j source confirms the complete MiniLM embedding pipeline (`ai.djl.huggingface:tokenizers:0.36.0` + `com.microsoft.onnxruntime:onnxruntime:1.20.0`). Non-obvious detail: texts >510 tokens are partitioned at word boundaries, each partition embedded independently, then combined via token-count-weighted average before L2 normalization. Argonaut can produce 384-dimensional embeddings without any LangChain4j dependency — ~80 lines of Java against the two runtime artifacts.
+**Key finding — LanceDB:** Java support confirmed as remote-client-only. Local embedded mode (the primary LanceDB value proposition) is unavailable in Java. From a Java project's perspective, LanceDB adds no architectural novelty over Qdrant.
+**Decision:** Recommended shortlist for Argonaut 0.2: `InMemoryEmbeddingStore` (baseline) + `Integrallis Vectors` (embedded persistent) + `Qdrant` (dedicated server). These three cover materially distinct operational models.
+**Output:** Engineering report (`ARGONAUT-0.2-002-vector-embedding-research.md`); three retained knowledge documents in `docs/knowledge/vector-backends/` (ONNX pipeline, Integrallis Vectors, candidate matrix).
+**Report:** [ARGONAUT-0.2-002-vector-embedding-research.md](agents/reports/ARGONAUT-0.2-002-vector-embedding-research.md)
+**Validation:** `git diff --check` clean. No implementation changes.
+**Status:** Complete
+
 ## 2026-08-23 — ARGONAUT-UI-001: Experiment Console
 
 **Type:** Frontend implementation

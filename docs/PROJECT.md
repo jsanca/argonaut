@@ -15,6 +15,7 @@ Argonaut is a comparative laboratory for agentic AI frameworks. It runs the same
 - A Docker Compose laboratory covering all services and the nginx-hosted production UI.
 - OpenRouter as the shared model provider for all framework implementations.
 - Controlled local evidence corpus for the initial experiment.
+- A backend-independent synthetic corpus for controlled vector-retrieval evaluation.
 - Observability sufficient to compare executions: capability invocations, evidence gathered, execution trace, duration, model calls, tool calls, steps, retries, and status.
 
 ### Out of scope
@@ -27,6 +28,8 @@ Argonaut is a comparative laboratory for agentic AI frameworks. It runs the same
 ## Current State
 
 The five framework services implement the shared HTTP contract and the Vue console is available. `compose.yaml` builds the Java 25 services from one reusable multi-stage Dockerfile, serves the production UI through nginx, and routes browser requests through same-origin framework prefixes. OpenRouter configuration is injected only into backend containers.
+
+Argonaut Vector also has a versioned synthetic retrieval corpus under `docs/knowledge/vector-synthetic-corpus/`. It supplies fixed documents, golden queries, and graded relevance judgments for comparing retrieval rankings without an LLM ground-truth judge.
 
 ## Architecture
 

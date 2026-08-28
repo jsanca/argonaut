@@ -1,0 +1,66 @@
+Argonaut Vector Smoke Test
+==========================================================================================
+Provider: IN_MEMORY
+
+==========================================================================================
+SMOKE-SEMANTIC — Semantic retrieval / startup probe
+==========================================================================================
+Query: How should Kubernetes handle applications that take a long time to initialize?
+Limit: 5
+
+#1  DOC-006      score=0.76693416
+    # DOC-006 — Kubernetes startup probes for slow initialization Use a Kubernetes startup probe when an application legitimately needs a long initialization period. While the startup probe has not succeeded, Kubernetes does not apply the liveness or readiness probes. This prevents a slow bootstrap from
+
+#2  DOC-005      score=0.660126
+    # DOC-005 — Kubernetes liveness and readiness A Kubernetes liveness probe answers whether a running container should be restarted. A readiness probe answers whether the application can receive service traffic. A process may be alive while it is not ready because it is warming a cache, opening a data
+
+#3  DOC-025      score=0.60691273
+    # DOC-025 — Rollout troubleshooting sequence When a newly deployed service is reachable but returns `503`, first determine whether endpoints are ready and whether the Service targets the intended Pods. Then inspect the application readiness reason, dependency initialization, and recent configuration
+
+#4  DOC-013      score=0.5452467
+    # DOC-013 — Kubernetes Service routing A Kubernetes Service gives clients a stable DNS name and selects backend Pods by labels. The Service `selector` must match the labels applied by the Deployment Pod template. `targetPort` identifies the port exposed by the selected container. A ready endpoint is
+
+#5  DOC-030      score=0.5156332
+    # DOC-030 — Spring Boot Kubernetes probe paths Spring Boot can expose Kubernetes-oriented health groups when `management.endpoint.health.probes.enabled=true`. The liveness and readiness groups should be mapped to HTTP paths and checked by the platform. Application-specific readiness contributors may
+
+==========================================================================================
+SMOKE-LEXICAL — Exact identifier / configuration property
+==========================================================================================
+Query: management.endpoint.health.probes.enabled
+Limit: 5
+
+#1  DOC-030      score=0.5257194
+    # DOC-030 — Spring Boot Kubernetes probe paths Spring Boot can expose Kubernetes-oriented health groups when `management.endpoint.health.probes.enabled=true`. The liveness and readiness groups should be mapped to HTTP paths and checked by the platform. Application-specific readiness contributors may
+
+#2  DOC-025      score=0.29927024
+    # DOC-025 — Rollout troubleshooting sequence When a newly deployed service is reachable but returns `503`, first determine whether endpoints are ready and whether the Service targets the intended Pods. Then inspect the application readiness reason, dependency initialization, and recent configuration
+
+#3  DOC-024      score=0.28073233
+    # DOC-024 — Rollout incident: Ready before retrieval dependency During a retrieval-service rollout, a Pod can report ready before a required local index restore has completed if readiness only checks the HTTP server. Requests may then receive `503` while the index is unavailable. The readiness contr
+
+#4  DOC-006      score=0.26125887
+    # DOC-006 — Kubernetes startup probes for slow initialization Use a Kubernetes startup probe when an application legitimately needs a long initialization period. While the startup probe has not succeeded, Kubernetes does not apply the liveness or readiness probes. This prevents a slow bootstrap from
+
+#5  DOC-005      score=0.25851804
+    # DOC-005 — Kubernetes liveness and readiness A Kubernetes liveness probe answers whether a running container should be restarted. A readiness probe answers whether the application can receive service traffic. A process may be alive while it is not ready because it is warming a cache, opening a data
+
+==========================================================================================
+SMOKE-NO-ANSWER — Query intentionally unrelated to the corpus
+==========================================================================================
+Query: What is the recommended tire pressure for a 2024 Toyota Corolla?
+Limit: 5
+
+#1  DOC-014      score=0.12690428
+    # DOC-014 — Qdrant collections and vector size A Qdrant collection declares the vector configuration used by its points, including vector size and distance metric. Every point written to that vector field must have the configured number of dimensions. A 384-dimensional embedding cannot be inserted i
+
+#2  DOC-005      score=0.11996282
+    # DOC-005 — Kubernetes liveness and readiness A Kubernetes liveness probe answers whether a running container should be restarted. A readiness probe answers whether the application can receive service traffic. A process may be alive while it is not ready because it is warming a cache, opening a data
+
+#3  DOC-022      score=0.11599921
+    # DOC-022 — Embedding dimension mismatch An embedding dimension mismatch is a schema error: the encoder produced a vector length different from the index or collection expects. It is not solved by cosine normalization, HNSW tuning, or changing the query limit. Validate the embedding dimension during
+
+#4  DOC-021      score=0.115193814
+    # DOC-021 — Qdrant HNSW collection configuration Qdrant can use an HNSW index for vector search within a collection. Its collection-level HNSW configuration controls graph construction behavior, while search parameters control the candidate breadth used for a request. These controls are specific to 
+
+#5  DOC-030      score=0.102907315
+    # DOC-030 — Spring Boot Kubernetes probe paths Spring Boot can expose Kubernetes-oriented health groups when `management.endpoint.health.probes.enabled=true`. The liveness and readiness groups should be mapped to HTTP paths and checked by the platform. Application-specific readiness contributors may

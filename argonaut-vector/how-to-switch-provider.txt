@@ -1,0 +1,13 @@
+curl -X PUT http://localhost:8086/api/vector/provider \
+  -H 'Content-Type: application/json' \
+  -d '{"provider":"IN_MEMORY"}'
+
+# Integrallis
+curl -X PUT http://localhost:8086/api/vector/provider \
+  -H 'Content-Type: application/json' \
+  -d '{"provider":"INTEGRALLIS"}'
+
+# Qdrant
+curl -X PUT http://localhost:8086/api/vector/provider \
+  -H 'Content-Type: application/json' \
+  -d '{"provider":"QDRANT"}'

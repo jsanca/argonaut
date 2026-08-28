@@ -11,6 +11,7 @@ skills:
     catalogPath: architecture/osk-adversarial-analysis
     installedPath: .osk/skills/osk-adversarial-analysis
     fingerprint: dab7f7dd62e4748821d53d062db5bfbf930d9b6094a2305181b41f5a691016ea
+    canonicalSHA256: 
     adapters:
       claude-code: installed
       codex: installed
@@ -22,6 +23,7 @@ skills:
     catalogPath: guide/osk-agent-harness-guide
     installedPath: .osk/skills/osk-agent-harness-guide
     fingerprint: ee94bed8ea81e143298da1887732bba41a7f9302444cab78742c4cc76dba402b
+    canonicalSHA256: 
     adapters:
       claude-code: installed
       codex: installed
@@ -33,21 +35,27 @@ skills:
     catalogPath: architecture/osk-boundary-review
     installedPath: .osk/skills/osk-boundary-review
     fingerprint: 055deb757d921910df28a78df475e3ad4e56ca0fb671587c4dc1d7c71b630d5a
+    canonicalSHA256: 
     adapters:
       claude-code: already installed
       codex: already installed
       opencode: installed
   osk-engineering-reporting:
-    version: 0.1.0
+    version: 0.1.2
     category: process
-    ownership: 
+    ownership: osk
     catalogPath: process/osk-engineering-reporting
     installedPath: .osk/skills/osk-engineering-reporting
-    fingerprint: 8982c9c4f80b204e08995f69b2905386fce67fda677190004ae130e2dde701aa
+    fingerprint: 622af742bf0f1895a800b8e89947e3312a99c0bb0df52f5ea8c8f04caae79ad9
+    canonicalSHA256: 622af742bf0f1895a800b8e89947e3312a99c0bb0df52f5ea8c8f04caae79ad9
     adapters:
-      claude-code: already installed
-      codex: already installed
-      opencode: installed
+      claude-code: already installed (adopted)
+      codex: already installed (adopted)
+      opencode: updated
+    adapterSHA256:
+      claude-code: feb15d98f4016702f0eae76277881669491d8226a41f58e526097ba2ce3f3ff4
+      codex: 1423e8c376948769ad7f39ef31ef3a41a85e6d10c44aef9d0680e924058fcb75
+      opencode: 13a3a4bce7c8ba12b0809c7ee87a4182906397f0f7dc351a28548e993f2c6e0c
   osk-knowledge-curator:
     version: 0.1.0
     category: documentation
@@ -55,6 +63,7 @@ skills:
     catalogPath: documentation/osk-knowledge-curator
     installedPath: .osk/skills/osk-knowledge-curator
     fingerprint: adc32f26930855bf17eebcdc50adf0859f962df9ab12a8d65170b46ab8b71fca
+    canonicalSHA256: 
     adapters:
       claude-code: installed
       codex: installed
@@ -66,6 +75,7 @@ skills:
     catalogPath: process/osk-verification-engineering
     installedPath: .osk/skills/osk-verification-engineering
     fingerprint: 2c69663ed7921f428f38d5bb2f7c8aee3e0f18feee99ca642e4c2bbb2cbf6fb0
+    canonicalSHA256: 
     adapters:
       claude-code: already installed
       codex: already installed

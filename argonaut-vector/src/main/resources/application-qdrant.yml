@@ -1,0 +1,6 @@
+argonaut:
+  vector:
+    provider: qdrant
+    qdrant:
+      host: localhost
+      grpc-port: 6334

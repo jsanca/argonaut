@@ -1,6 +1,6 @@
 ---
 name: osk-engineering-reporting
-description: Produce durable, evidence-based implementation, review, fix, checkpoint, and audit records.
+description: Produce durable, evidence-based implementation, review, fix, checkpoint, audit, and engineering-log records.
 metadata:
   osk/canonical: .osk/skills/osk-engineering-reporting/SKILL.md
 ---

@@ -19,6 +19,7 @@
         <module>argonaut-langgraph4j</module>
         <module>argonaut-embabel</module>
         <module>argonaut-koog</module>
+        <module>argonaut-vector</module>
     </modules>
 
     <properties>

@@ -55,6 +55,7 @@ argonaut-langchain4j  — LangChain4j service, port 8082
 argonaut-langgraph4j  — LangGraph4j service, port 8083
 argonaut-embabel      — Embabel service, port 8084
 argonaut-koog         — Koog service, port 8085 (Kotlin)
+argonaut-vector       — vector embedding & backend abstraction, port 8086
 argonaut-ui/          — Vue.js experiment console (not a Maven module)
 libs-code/            — locally-cloned framework sources (e.g. langgraph4j); not built by Maven
 ```
@@ -68,8 +69,9 @@ libs-code/            — locally-cloned framework sources (e.g. langgraph4j); n
 | `argonaut-langgraph4j` | LangGraph4j 1.8.24 + LangChain4j 1.18.1 + Spring Boot 4.1.0 | Complete | 12 (TC-UC-001) |
 | `argonaut-koog` | Koog 1.1.1 + Spring Boot 4.1.0 (Kotlin 2.3.21) | Complete | 12 (TC-UC-001) |
 | `argonaut-embabel` | Embabel 1.5.0 + Spring Boot 4.1.0 | Complete | 8 (TC-UC-001) |
+| `argonaut-vector` | ONNX (MiniLM-L6-v2) + Integrallis + Qdrant + Spring Boot 4.1.0 | Complete | 13 (9 pass, 4 skip — platform) |
 
-A clean `mvn verify` produces **156 tests** (111 core + 4 Spring AI + 9 LangChain4j + 12 LangGraph4j + 12 Koog + 8 Embabel).
+A clean `mvn verify` produces **169 tests** (111 core + 4 Spring AI + 9 LangChain4j + 12 LangGraph4j + 12 Koog + 8 Embabel + 13 vector). The 4 skipped vector tests require a `linux-x86_64` JVM: `ai.djl.huggingface:tokenizers:0.36.0` ships `linux-x86_64` and `osx-aarch64` native libraries but **not** `osx-x86_64`. On an Intel Mac the ONNX-dependent tests are skipped and `argonaut-vector` cannot start on the host. The fix is to run inside Docker (`cd argonaut-vector && docker compose up --build`) where the Linux/amd64 runtime resolves the `linux-x86_64` library correctly.
 
 ### The non-negotiable boundary rule
 
@@ -96,12 +98,19 @@ The rule in one line: **share contracts, tools, fixtures, and observability stru
 
 ### Common HTTP contract
 
-Implemented in `argonaut-spring-ai`, `argonaut-langchain4j`, `argonaut-langgraph4j`, and `argonaut-koog`; pending for `argonaut-embabel`.
+Implemented in `argonaut-spring-ai`, `argonaut-langchain4j`, `argonaut-langgraph4j`, `argonaut-koog`, and `argonaut-embabel`.
 
 ```
 GET  /api/health
 GET  /api/about       → ArgonautInfo
 POST /api/experiment/run  → ExperimentResult
+```
+
+`argonaut-vector` exposes `/api/health` and `/api/about` but uses vector-specific endpoints instead of `/api/experiment/run`:
+
+```
+POST /api/vector/store   — index a document (text + metadata)
+POST /api/vector/search  — semantic search (query + topK)
 ```
 
 ### Execution observability pattern
@@ -156,6 +165,43 @@ These are key differences discovered during implementation — not in the genera
 - **Testing without AgentPlatform**: `FakeOperationContext` (from `embabel-agent-test`) is passed directly to `@Action` methods — actions are plain Java methods callable without the full Embabel platform. Real `KnowledgeRepository` runs during tests; only the LLM synthesis step is mocked.
 - **Surefire reporting quirk**: JUnit 5 + Surefire 3.5.2 reports outer class `@Test` methods under the `$ActionShapeTests` nested class label (totaling 8 instead of the expected split of 4+4). The surefire XML confirms all 8 tests ran correctly.
 - Production invocation: `AgentInvocation.builder(agentPlatform).build(EvidenceAnswer.class).invoke(question)` drives the planner from a REST controller.
+
+### `argonaut-vector` architecture
+
+`argonaut-vector` is a standalone Spring Boot module — it has no dependency on `argonaut-core` or any AI framework module.
+
+**Three-port contract:**
+
+| Port | Interface | Purpose |
+| --- | --- | --- |
+| `EmbeddingPort` | `OnnxEmbeddingAdapter` | Convert text → 384-dim L2-normalized float vector |
+| `StorePort` | `InMemoryVectorAdapter`, `IntegrallisVectorAdapter`, `QdrantVectorAdapter` | Persist and index `VectorDocument` records |
+| `SearchPort` | same three adapters | Semantic nearest-neighbor lookup |
+
+`SemanticRepository` orchestrates the three ports: embed → store (on index) and embed → search (on query). Adapters implement both `StorePort` and `SearchPort` in a single class.
+
+**Backend selection** via `application.yml`:
+
+```yaml
+argonaut:
+  vector:
+    provider: in_memory   # in_memory | integrallis | qdrant
+    qdrant:
+      host: localhost
+      grpc-port: 6334
+      enabled: false      # must be true to activate QdrantVectorAdapter
+    integrallis:
+      storage-path: ""    # empty = in-process; set a path for persistent mmap storage
+```
+
+**Spring DI strategy registry** — `VectorConfiguration` builds a `Map<VectorProvider, StorePort>` and `Map<VectorProvider, SearchPort>`, then selects the active adapter by `VectorProvider` enum value. Adding a new backend only requires implementing both ports and registering the bean in `VectorConfiguration`.
+
+**ONNX embedding pipeline:**
+- Model: `sentence-transformers/all-MiniLM-L6-v2`, 384 dimensions, L2-normalized output
+- Tokenizer via DJL HuggingFace (`ai.djl.huggingface:tokenizers:0.36.0`); runtime via `onnxruntime:1.20.0`
+- Long texts are partitioned at word boundaries to fit BERT's 510-token limit; partition embeddings are averaged weighted by token count
+
+**Qdrant** is included in `argonaut-vector/compose.yaml` (REST port 6333, gRPC port 6334, named volume `argonaut-vector_qdrant_data`). The recommended way to run the full experiment is `cd argonaut-vector && docker compose up --build` — both the application and Qdrant run as `linux/amd64` containers, which provides the `linux-x86_64` native tokenizer lib absent on the Intel Mac host. When running in Compose, `ARGONAUT_VECTOR_QDRANT_HOST=qdrant` overrides `application-qdrant.yml`'s `localhost` with the Compose service hostname.
 
 ---
 
