@@ -2,6 +2,55 @@
 
 This is the stable active engineering log. Add concise, dated entries for material completed work, decisions, evidence, and open follow-up.
 
+## 2026-09-23 — ARG-DECISION-EP-002F: LangChain4j Infrastructure Reuse Refactor
+
+**Type:** Refactor — infrastructure correction to EP-002
+**Plan:** ARG-DECISION-EP-002F
+**Review source:** ARG-DECISION-EP-002R (verdict: REFACTOR — OkHttp/Retrofit coupling claim invalidated)
+**Output:** `argonaut-decision-jev` refactored to reuse LC4J generic HTTP infrastructure. `JevHttpTransport` now uses `dev.langchain4j.http.client.HttpClient` (via `JdkHttpClient`) instead of raw JDK `HttpClient`. `RetryUtils.RetryPolicy` provides exponential backoff with jitter. Exception hierarchy now cooperates with `RetriableException`/`NonRetriableException` — 429/503/timeout retry automatically; 401/422 stop immediately.
+**Key decisions:**
+- `JevException extends RetriableException`; `JevAuthException` and `JevValidationException` extend `NonRetriableException` directly (break from `JevException` hierarchy to avoid retriable base tainting non-retriable types).
+- Connect timeout (default 10 s) and read timeout (default 60 s) separated; previous single `timeout()` setter removed.
+- `JevDecisionModel.Builder.httpClientBuilder(HttpClientBuilder)` added — injectable for testing and advanced SSL; default path (`JdkHttpClientBuilder`) unchanged.
+- JSON: KEEP CURRENT JACKSON — LC4J's `Json` utility is OpenAI-provider-internal.
+- `LoggingHttpClient` safe (masks `Authorization` header) but wiring deferred to avoid scope creep.
+**Validation:** 23 tests JV-001..JV-023 (15 original + 8 new retry/timeout/injection tests) — all pass. Full reactor (excl. `argonaut-vector`): 213 tests, 0 failures.
+**Domain changes:** None — `argonaut-decision` untouched.
+**Report:** [ARG-DECISION-EP-002F-lc4j-infrastructure-reuse.md](agents/reports/ARG-DECISION-EP-002F-lc4j-infrastructure-reuse.md)
+**Status:** Complete
+
+## 2026-09-22 — ARG-DECISION-EP-002: Jev DecisionModel Provider
+
+**Type:** Implementation — first real `DecisionModel` provider
+**Plan:** ARG-DECISION-EP-002
+**Output:** New `argonaut-decision-jev` module. `JevDecisionModel implements DecisionModel`, backed by the TypeSafe AI Jev System One API. Internal layers: `JevHttpTransport` (JDK `HttpClient`), `JevRequestMapper` / `JevResponseMapper` / `CandidateKey<T>`, five Jackson DTOs, `JevException` hierarchy (Auth, RateLimit, Overload, Validation, Transport). Public API is `JevDecisionModel` alone — all Jev wire types are internal.
+**Key decisions:**
+- One `DecisionRequest` → one `POST /v1/systemone` (native batch verified by JV-005).
+- `CandidateKey<T>` maps candidates via `toString()`; uniqueness validated at mapping time; reverse map held in `JevRequestMapper.MappingResult` for response round-trip.
+- Score `selected` derived by argmax of probability distribution; `rawScore` (fractional) preserved via the EP-001 `ScoreResult.rawScore` amendment.
+- Absent `confidence`/`probabilities` → `null` in domain types (not `0.0` / empty distribution).
+- `JevDecisionModel.Builder.baseUrl()` exposed for test isolation and self-hosted deployments.
+- LangChain4j infrastructure reused: Jackson (same transitive version), WireMock pattern. LC4J `ChatModel`/`ChatRequest`/observability rejected — semantically incorrect for a decision API.
+- `DecisionModelListener` SPI deferred: no concrete consumer demand yet (see F-007 in report).
+**Validation:** 15 WireMock tests JV-001..JV-015 — all pass. Reactor without `argonaut-vector`: 205 tests, 0 failures. `argonaut-vector` has a pre-existing `spring-boot-maven-plugin:repackage` failure (boot jar packaging, not test failure).
+**Core changes:** None during EP-002 — both amendments (`forProvider()`, `ScoreResult.rawScore`) were made as EP-001 SPI/gap fixes before provider implementation.
+**Report:** [ARG-DECISION-EP-002-jev-provider.md](agents/reports/ARG-DECISION-EP-002-jev-provider.md)
+**Status:** Complete
+
+## 2026-09-22 — ARG-DECISION-EP-001: Decision Model Foundation
+
+**Type:** Implementation — domain skeleton
+**Plan:** ARG-DECISION-EP-001
+**Output:** New `argonaut-decision` module (no provider dependencies). Domain types: `DecisionModel`, `DecisionRequest`, `DecisionResult`, `DecisionContext`, `DecisionCapability`; question hierarchy (`Question<T,R>`, `Choice<T>`, `Score<T>`, `Noul`); result hierarchy (`AnswerResult<T>`, `ChoiceResult<T>`, `ScoreResult<T>`, `NoulResult`); probability types (`Probability`, `ProbabilityDistribution<T>`, `OutcomeProbability<T>`); `FakeDecisionModel` in test scope.
+**Key decisions:**
+- `AnswerResult<T>` promoted from "candidate" to required — it is the bound that enables no-consumer-cast typed retrieval via `DecisionResult.get(Question<T,R>)`.
+- `Noul` uses `T = Void` — correct Java idiom for a question with no candidate domain type.
+- `DecisionResult.assemble()` is package-private — allows `FakeDecisionModel` (same package, test scope) to construct results without exposing a raw-map API to consumers.
+- `Probability` guards against `NaN` via `!Double.isFinite(value)` — the naive `< 0 || > 1` check silently accepts `NaN`.
+**Validation:** `mvn verify` — 217 pass, 4 skip (platform ONNX, pre-existing), 0 failures across all 8 modules. `argonaut-decision` alone: 34 tests, 0 failures. All 10 TDD scenarios (TC-DM-001 through TC-DM-010) pass. Exit-criteria code from §27 compiles and runs without consumer casts, Jev dependency, or implicit Noul threshold.
+**Report:** [ARG-DECISION-EP-001-decision-model-foundation.md](agents/reports/ARG-DECISION-EP-001-decision-model-foundation.md)
+**Status:** Complete
+
 ## 2026-08-25 — Argonaut Vector Synthetic Corpus v0.1
 
 **Type:** Knowledge corpus / retrieval evaluation fixture

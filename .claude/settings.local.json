@@ -114,7 +114,17 @@
       "Bash(pip3 install *)",
       "Bash(.venv/bin/pip install *)",
       "Bash(.venv/bin/python3 -c ' *)",
-      "Bash(.venv/bin/python3 *)"
+      "Bash(.venv/bin/python3 *)",
+      "Bash(git *)",
+      "Bash(.osk/capabilities/deterministic-verification/verify.sh *)",
+      "Bash(xxd)",
+      "WebFetch(domain:docs.typesafe.ai)",
+      "WebFetch(domain:docs.aimlapi.com)",
+      "WebFetch(domain:typesafe.ai)",
+      "WebFetch(domain:developers.cloudflare.com)",
+      "Bash(mvn dependency:tree -pl argonaut-langchain4j -Dincludes=com.fasterxml.jackson)",
+      "Bash(mvn dependency:tree -pl argonaut-langchain4j)",
+      "Bash(grep -v \"^--$\")"
     ]
   }
 }

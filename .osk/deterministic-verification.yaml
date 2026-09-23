@@ -1,0 +1,10 @@
+schema: osk.deterministic-verification/v0alpha2
+targets:
+  - id: backend
+    path: .
+    buildCommand: mvn compile
+    testCommand: mvn verify
+  - id: ui
+    path: argonaut-ui
+    buildCommand: npm run build
+    testCommand: npm run test

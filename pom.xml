@@ -20,6 +20,8 @@
         <module>argonaut-embabel</module>
         <module>argonaut-koog</module>
         <module>argonaut-vector</module>
+        <module>argonaut-decision</module>
+        <module>argonaut-decision-jev</module>
     </modules>
 
     <properties>

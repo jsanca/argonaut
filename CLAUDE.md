@@ -36,9 +36,31 @@ mvn verify -DskipTests
 
 Requires Java 25 (Temurin 25 recommended via SDKMAN). The build will fail explicitly on JDK < 25 — do not attempt to downgrade the `maven.compiler.release` property.
 
-`argonaut-ui` is **not** part of the Maven reactor. It is a sibling directory for the future Vue.js frontend.
-
 Unit tests in framework modules use mock chat models — no real LLM call or network is required. To run a framework service locally against a real model, set the env vars from `.env.example` (`OPENROUTER_API_KEY`, `OPENROUTER_MODEL`, optionally `OPENROUTER_BASE_URL`).
+
+**argonaut-ui** is not part of the Maven reactor. Commands (run from `argonaut-ui/`):
+
+```bash
+npm install          # first-time setup
+npm run dev          # Vite dev server with HMR
+npm run test         # Vitest unit tests (single run)
+npm run test:watch   # Vitest in watch mode
+npm run build        # vue-tsc type-check + Vite production build
+```
+
+**Full-stack Docker Compose** (root `compose.yaml`) runs all six backend services + Qdrant + the UI together. Requires credentials from `.env.example`:
+
+```bash
+# Copy and fill in credentials
+cp .env.example .env
+
+# Build and start everything (first run takes a few minutes)
+docker compose up --build
+
+# UI → http://localhost:8080
+```
+
+The `argonaut-vector` module also ships its own `argonaut-vector/compose.yaml` (vector service + Qdrant only), useful when working on vector features in isolation.
 
 ---
 
@@ -229,6 +251,8 @@ Each new framework module follows the Spring AI module as its reference implemen
 
 ## OSK Installed Skills
 
+`.osk/skills/` is the authoritative source for OSK skills; copies under `.claude/skills/` are tool-specific adapters.
+
 The following skills are available and activated by invocation — use them for their specific domains:
 
 - [Architecture Review](.osk/skills/osk-architecture-review/SKILL.md) — structural/boundary assessment
@@ -236,6 +260,12 @@ The following skills are available and activated by invocation — use them for 
 - [Engineering Reporting](.osk/skills/osk-engineering-reporting/SKILL.md) — implementation/review/checkpoint reports
 - [Execution Observability](.osk/skills/osk-execution-observability/SKILL.md) — progress checkpoints and mode selection
 - [Verification Engineering](.osk/skills/osk-verification-engineering/SKILL.md) — traceable test cases and verification evidence
+- [Knowledge Curator](.osk/skills/osk-knowledge-curator/SKILL.md) — durable project knowledge curation
+- [Adversarial Analysis](.osk/skills/osk-adversarial-analysis/SKILL.md) — adversarial/red-team review
+- [Agent Harness Guide](.osk/skills/osk-agent-harness-guide/SKILL.md) — agent harness usage
+- [Knowledge Integrity Review](.osk/skills/osk-knowledge-integrity-review/SKILL.md) — coherence, currency, and authority of project knowledge
+- [Execution Timebox](.osk/skills/osk-execution-timebox/SKILL.md) — structured recovery when scope or context is at risk
+- [Code Docs](.osk/skills/osk-code-docs/SKILL.md) — publish static documentation from authoritative sources
 
 Additional skills in `.claude/skills/` cover Java 25, Spring Boot 4.1, Spring Boot service patterns, AI backend engineering, concurrency, quality gates, security hardening, testing, and the full Vue ecosystem.
 
@@ -252,3 +282,6 @@ Additional skills in `.claude/skills/` cover Java 25, Spring Boot 4.1, Spring Bo
 | Active engineering record | `docs/engineering/ENGINEERING_LOG.md` |
 
 Update `ENGINEERING_LOG.md` with a dated entry after completing any non-trivial task.
+
+## important
+ignore the folder ./libs-code in your init command, they are external libraries not argonaut code

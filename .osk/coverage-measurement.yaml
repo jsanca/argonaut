@@ -1,0 +1,11 @@
+schema: osk.coverage-measurement/v0alpha1
+targets:
+  - id: java-reactor
+    path: .
+    provider:
+      id: jacoco-maven
+      tool: maven
+      version: 0.8.14
+      command: mvn org.jacoco:jacoco-maven-plugin:0.8.14:prepare-agent verify org.jacoco:jacoco-maven-plugin:0.8.14:report
+      primaryArtifact: argonaut-core/target/site/jacoco/jacoco.xml
+      format: jacoco-xml

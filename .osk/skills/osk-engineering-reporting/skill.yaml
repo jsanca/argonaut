@@ -1,4 +1,4 @@
-schema: loski.skill/v0alpha1
+schema: osk.skill/v0alpha1
 id: osk-engineering-reporting
 name: Engineering Reporting
 version: 0.1.2

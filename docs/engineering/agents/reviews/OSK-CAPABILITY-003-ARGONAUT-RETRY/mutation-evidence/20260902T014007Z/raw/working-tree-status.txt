@@ -1,0 +1,24 @@
+ M .claude/settings.local.json
+ M .osk/skills/osk-adversarial-analysis/skill.yaml
+ M .osk/skills/osk-architecture-review/skill.yaml
+ M .osk/skills/osk-boundary-review/skill.yaml
+ M .osk/skills/osk-engineering-reporting/skill.yaml
+ M .osk/skills/osk-execution-observability/skill.yaml
+ M .osk/skills/osk-knowledge-curator/skill.yaml
+ M .osk/skills/osk-verification-engineering/SKILL.md
+ M .osk/skills/osk-verification-engineering/skill.yaml
+ M .osk/workspace.yaml
+ M CLAUDE.md
+?? .osk/capabilities/
+?? .osk/coverage-measurement.yaml
+?? .osk/deterministic-verification.yaml
+?? .osk/mutation-testing.yaml
+?? .osk/roles/
+?? .osk/skills/osk-code-docs/
+?? .osk/skills/osk-execution-timebox/
+?? .osk/skills/osk-knowledge-integrity-review/
+?? .osk/skills/osk-verification-engineering/references/
+?? docs/engineering/agents/reviews/ARGONAUT-DV-CONFIG-001/
+?? docs/engineering/agents/reviews/ARGONAUT-DV-CONFIG-002/
+?? docs/engineering/agents/reviews/OSK-CAPABILITY-002-ARGONAUT/
+?? docs/engineering/agents/reviews/OSK-CAPABILITY-003-ARGONAUT/

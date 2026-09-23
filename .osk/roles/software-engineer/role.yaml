@@ -1,0 +1,6 @@
+schema: osk.role/v0alpha1
+id: software-engineer
+name: Software Engineer
+version: 0.1.0
+description: Design, implement, evolve, and technically verify authorized software work.
+recommendationReason: No single OSK Skill is a universal baseline for every software slice.

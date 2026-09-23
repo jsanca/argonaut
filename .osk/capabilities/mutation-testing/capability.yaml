@@ -1,0 +1,10 @@
+schema: osk.capability/v0alpha1
+id: mutation-testing
+name: Mutation Testing
+version: 0.1.0
+description: Acquire provider-backed mutation-testing evidence for project-owned targets, retaining scope, execution, normalized findings, and primary provider evidence without applying quality policy.
+ownership: osk
+entryPoint: mutate.sh
+configurationPath: .osk/mutation-testing.yaml
+configurationSchema: osk.mutation-testing/v0alpha1
+postInstallGuidance: post-install.md

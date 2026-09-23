@@ -1,0 +1,8 @@
+schema: osk.role/v0alpha1
+id: qa-engineer
+name: QA Engineer
+version: 0.1.0
+description: Establish evidence that expected behavior and quality requirements hold.
+recommendationReason: QA requires reproducible behavioral verification, evidence sufficiency, and clear outcomes.
+recommendedSkills:
+  - osk-verification-engineering

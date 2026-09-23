@@ -1,4 +1,4 @@
-schema: loski.skill/v0alpha1
+schema: osk.skill/v0alpha1
 id: osk-adversarial-analysis
 name: Adversarial Analysis
 version: 0.1.0

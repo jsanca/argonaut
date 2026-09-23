@@ -1,0 +1,12 @@
+schema: osk.mutation-testing/v0alpha1
+targets:
+  - id: core-metrics
+    path: .
+    scope: argonaut-core package dev.jsanca.argonaut.core.metrics and its matching tests; bounded experimental mutation analysis
+    provider:
+      id: pitest
+      tool: pitest-maven
+      version: 1.30.0
+      command: mvn -pl argonaut-core test-compile org.pitest:pitest-maven:1.30.0:mutationCoverage -DtargetClasses=dev.jsanca.argonaut.core.metrics.* -DtargetTests=dev.jsanca.argonaut.core.metrics.* -DoutputFormats=XML -DtimestampedReports=false
+      primaryArtifact: argonaut-core/target/pit-reports/mutations.xml
+      format: pitest-xml

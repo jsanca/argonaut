@@ -1,0 +1,403 @@
+diff --git a/.claude/settings.local.json b/.claude/settings.local.json
+index 0558019..178bfb8 100644
+--- a/.claude/settings.local.json
++++ b/.claude/settings.local.json
+@@ -114,7 +114,9 @@
+       "Bash(pip3 install *)",
+       "Bash(.venv/bin/pip install *)",
+       "Bash(.venv/bin/python3 -c ' *)",
+-      "Bash(.venv/bin/python3 *)"
++      "Bash(.venv/bin/python3 *)",
++      "Bash(git *)",
++      "Bash(.osk/capabilities/deterministic-verification/verify.sh *)"
+     ]
+   }
+ }
+diff --git a/.osk/skills/osk-adversarial-analysis/skill.yaml b/.osk/skills/osk-adversarial-analysis/skill.yaml
+index 61fa55a..7dfff53 100644
+--- a/.osk/skills/osk-adversarial-analysis/skill.yaml
++++ b/.osk/skills/osk-adversarial-analysis/skill.yaml
+@@ -1,4 +1,4 @@
+-schema: loski.skill/v0alpha1
++schema: osk.skill/v0alpha1
+ id: osk-adversarial-analysis
+ name: Adversarial Analysis
+ version: 0.1.0
+diff --git a/.osk/skills/osk-architecture-review/skill.yaml b/.osk/skills/osk-architecture-review/skill.yaml
+index 8a2f10e..fa06ac0 100644
+--- a/.osk/skills/osk-architecture-review/skill.yaml
++++ b/.osk/skills/osk-architecture-review/skill.yaml
+@@ -1,4 +1,4 @@
+-schema: loski.skill/v0alpha1
++schema: osk.skill/v0alpha1
+ id: osk-architecture-review
+ name: Architecture Review
+ version: 0.1.0
+diff --git a/.osk/skills/osk-boundary-review/skill.yaml b/.osk/skills/osk-boundary-review/skill.yaml
+index b4b2845..95ad3df 100644
+--- a/.osk/skills/osk-boundary-review/skill.yaml
++++ b/.osk/skills/osk-boundary-review/skill.yaml
+@@ -1,4 +1,4 @@
+-schema: loski.skill/v0alpha1
++schema: osk.skill/v0alpha1
+ id: osk-boundary-review
+ name: Architecture Boundary Review
+ version: 0.1.0
+diff --git a/.osk/skills/osk-engineering-reporting/skill.yaml b/.osk/skills/osk-engineering-reporting/skill.yaml
+index 9ca17fb..a3cd9d1 100644
+--- a/.osk/skills/osk-engineering-reporting/skill.yaml
++++ b/.osk/skills/osk-engineering-reporting/skill.yaml
+@@ -1,4 +1,4 @@
+-schema: loski.skill/v0alpha1
++schema: osk.skill/v0alpha1
+ id: osk-engineering-reporting
+ name: Engineering Reporting
+ version: 0.1.2
+diff --git a/.osk/skills/osk-execution-observability/skill.yaml b/.osk/skills/osk-execution-observability/skill.yaml
+index 1ec8e25..b4e2225 100644
+--- a/.osk/skills/osk-execution-observability/skill.yaml
++++ b/.osk/skills/osk-execution-observability/skill.yaml
+@@ -1,4 +1,4 @@
+-schema: loski.skill/v0alpha1
++schema: osk.skill/v0alpha1
+ id: osk-execution-observability
+ name: Execution Observability
+ version: 0.1.0
+diff --git a/.osk/skills/osk-knowledge-curator/skill.yaml b/.osk/skills/osk-knowledge-curator/skill.yaml
+index 880aed0..c6dda5f 100644
+--- a/.osk/skills/osk-knowledge-curator/skill.yaml
++++ b/.osk/skills/osk-knowledge-curator/skill.yaml
+@@ -1,4 +1,4 @@
+-schema: loski.skill/v0alpha1
++schema: osk.skill/v0alpha1
+ id: osk-knowledge-curator
+ name: Knowledge Curator
+ version: 0.1.0
+diff --git a/.osk/skills/osk-verification-engineering/SKILL.md b/.osk/skills/osk-verification-engineering/SKILL.md
+index 0cf1b51..d08ee10 100644
+--- a/.osk/skills/osk-verification-engineering/SKILL.md
++++ b/.osk/skills/osk-verification-engineering/SKILL.md
+@@ -20,7 +20,7 @@ Transform product requirements and use cases into reproducible verification evid
+ - Treat use cases/business rules, acceptance criteria, and documented test cases as the source of truth; automation implements rather than invents expected behavior.
+ - Design tool-independent test cases and map each automated test to its test-case identifier.
+ - Choose the least expensive verification level that can produce sufficient evidence.
+-- Execute reproducibly, preserve proportional evidence, classify the actual result, and distinguish automation readiness from verified behavior.
++- Execute reproducibly, preserve proportional evidence, pin mutable evidence when consistent review requires it, classify the actual result, and distinguish automation readiness from verified behavior.
+ - Report missing prerequisites, environment boundaries, defects, partial scope, and non-convergence honestly.
+ 
+ ## Boundaries / Constraints
+@@ -49,10 +49,11 @@ Transform product requirements and use cases into reproducible verification evid
+ 1. Read use cases, business rules, acceptance criteria, and known regressions; report conflicting sources rather than silently selecting one.
+ 2. Derive tool-independent test cases, including preconditions, stimulus, expected observable result/side effects, evidence, cleanup, and priority/risk.
+ 3. Inspect existing infrastructure and choose the narrowest sufficient verification level.
+-4. Implement automation that references test-case IDs and is batch-runnable without AI.
+-5. Execute the smallest meaningful scope, capture proportional evidence, and classify observed results.
+-6. Preserve reproduction instructions and report verified, partial, blocked, failed, or unexecuted status honestly.
+-7. Stop under the timebox before non-convergent environment/debugging work consumes evidence and reporting time.
++4. Decide whether the evidence is stable or may change during multi-pass or parallel verification; pin the relevant mutable state when consistency materially matters.
++5. Implement automation that references test-case IDs and is batch-runnable without AI.
++6. Execute the smallest meaningful scope, capture proportional evidence, and classify observed results.
++7. Preserve reproduction instructions and report verified, partial, blocked, failed, or unexecuted status honestly.
++8. Stop under the timebox before non-convergent environment/debugging work consumes evidence and reporting time.
+ 
+ ## Questions to Ask
+ 
+@@ -75,6 +76,7 @@ Transform product requirements and use cases into reproducible verification evid
+ - [ ] Every case maps to a requirement/rule/criterion/regression and every automated test maps to a case ID.
+ - [ ] Test cases remain understandable without reading automation.
+ - [ ] The narrowest sufficient verification level was selected.
++- [ ] Mutable evidence used by independent reviewers was pinned once when doing so materially prevents moving-target conclusions.
+ - [ ] Automation is batch-runnable without AI and has meaningful exit status.
+ - [ ] Evidence proves the reported classification and avoids sensitive production data.
+ - [ ] Unexecuted automation is not reported as verified; partial/blocked scope is explicit.
+@@ -88,6 +90,8 @@ Transform product requirements and use cases into reproducible verification evid
+ - **Unbounded infrastructure improvisation** — creating environments or credentials outside scope.
+ - **Silent repair** — changing the system to pass a test without preserving initial failure evidence.
+ - **Unnecessary white-box coupling** — asserting private implementation details when public behavior proves the requirement.
++- **Moving-target review** — independent reviewers reconstruct a changing diff, log, report, or configuration state and reach conclusions about different evidence.
++- **Recursive reviewer fan-out** — reviewers delegate the same review again without an explicit workflow need, multiplying inconsistent evidence and work.
+ 
+ ## Dependencies
+ 
+@@ -141,6 +145,25 @@ Prefer black-box evidence: visible UI, HTTP response, supported emitted event, d
+ 
+ Evidence is proportional and diagnostic: runner output, structured results, failure screenshots/traces/videos, requests/responses, correlation-aware logs, approved query results, generated files, timestamps, and environment metadata. It answers what ran, under what conditions, what happened, why the result was classified, and how to reproduce it. Do not capture screenshots indiscriminately.
+ 
++### Pinned Evidence Snapshots
++
++Evidence can be **stable** (safe to read directly for the relevant verification window) or **mutable** (its underlying source may change while reviewers or verification passes run). Examples of mutable evidence include a working-tree diff, live/replaced test or build output, generated reports, configuration state, and benchmark results.
++
++When multiple reviewers, subagents, or separated verification passes evaluate the same mutable evidence, capture one shared snapshot before that work when doing so materially improves consistency. Do not add snapshot ceremony for a trivial single-pass check or evidence already stable by contract.
++
++A snapshot records only the evidence needed for the claim, with:
++
++- evidence source and scope;
++- capture timestamp or execution boundary;
++- producing command/process when applicable;
++- snapshot location and provenance, including a content digest when practical;
++- intended consumers/reviewers; and
++- an immutability expectation: do not overwrite or silently replace it during that review.
++
++Use a task/report-approved location that is readable by the intended consumers. A snapshot can be a copied diff, captured command output, generated report, or other bounded artifact; it need not be a full repository or environment dump. Do not capture environment dumps blindly. Redact credentials, tokens, secrets, personal data, and unrelated sensitive content before sharing evidence with reviewers or reports.
++
++Give all reviewers the same snapshot path/identity. They should not independently reconstruct mutable evidence unless their assigned role explicitly requires fresh state; if fresh state is required, label it as a separate observation rather than treating it as the shared review basis. Do not recursively delegate verification/review from a reviewer unless the workflow explicitly requests it.
++
+ ## Reproducibility and Tooling
+ 
+ Document prerequisites, setup, command, environment variables, expected output, evidence location, and cleanup. Preferred commands are repository-native, such as make test-e2e, a project verification script, go test, or a focused browser-runner command. They return zero for success and non-zero for failure or inability to execute; human-readable and structured results are used where supported.
+@@ -172,6 +195,8 @@ osk-execution-observability shows whether verification is converging. During imp
+ 
+ osk-engineering-reporting defines the durable final/checkpointed record. This skill supplies verification-specific cases, evidence, statuses, and findings rather than duplicating full report structure.
+ 
++When a pinned snapshot is material, preserve its identity, scope, producer, and consumers in the verification evidence handed to osk-engineering-reporting. The report may retain or link the snapshot according to project policy; it must not claim that a later mutable working tree was the evidence actually reviewed.
++
+ Verification findings may expose architectural concerns, such as non-isolatable data, unobservable asynchronous effects, nondeterministic startup, or missing boundaries. Report them and recommend osk-architecture-review rather than automatically conducting a full architecture review.
+ 
+ ## Examples
+@@ -192,6 +217,14 @@ Behavior: successful login redirects, preserves session, and loads authenticated
+ 
+ Behavior: failed registration does not persist a partial user. Assert the UI failure first; then use a read-only test-environment query for the test identifier to confirm no row.
+ 
++### Shared Change Review Snapshot
++
++Two reviewers must assess a pending change while implementation work may continue. Capture the scoped diff once at the review boundary, record its source revision/command, timestamp, location, scope, and reviewer identities, then give both reviewers that immutable file. If one reviewer must inspect the later working tree, report that fresh inspection separately; do not merge it into findings claimed about the shared snapshot.
++
++### Test Output Snapshot
++
++Capture the focused test command's output and exit status after the run completes, redact sensitive values, and record the command, execution boundary, output location, and digest when practical. Reviewers use the captured result rather than rerunning a test whose inputs or environment may have changed.
++
+ ### Blocked Verification
+ 
+ Status: BLOCKED.
+@@ -217,4 +250,4 @@ Use reproducible execution output, observed results, and traceability to require
+ 
+ ## Supporting Resources
+ 
+-None.
++- [references/deterministic-evidence-package-template.md](references/deterministic-evidence-package-template.md) — use when a task needs a durable, task-addressable record of deterministic-check execution. It preserves scope, provenance, individual results, not-executed checks, bounded raw evidence, and limits without substituting for QA or review judgment.
+diff --git a/.osk/skills/osk-verification-engineering/skill.yaml b/.osk/skills/osk-verification-engineering/skill.yaml
+index 59e3e89..43a3875 100644
+--- a/.osk/skills/osk-verification-engineering/skill.yaml
++++ b/.osk/skills/osk-verification-engineering/skill.yaml
+@@ -1,9 +1,9 @@
+-schema: loski.skill/v0alpha1
++schema: osk.skill/v0alpha1
+ id: osk-verification-engineering
+ name: Verification Engineering
+-version: 0.1.0
+-description: Transform requirements and use cases into reproducible verification automation, evidence, and outcomes.
++version: 0.1.2
++description: Transform requirements and use cases into reproducible verification automation, pinned evidence, and outcomes.
+ entrypoint: SKILL.md
+ capabilities:
+   - verification-engineering
+-tags: [qa, verification, test-case-design, acceptance-criteria, reproducible-tests, test-evidence]
++tags: [qa, verification, test-case-design, acceptance-criteria, reproducible-tests, test-evidence, evidence-snapshots]
+diff --git a/.osk/workspace.yaml b/.osk/workspace.yaml
+index b814256..01ceb74 100644
+--- a/.osk/workspace.yaml
++++ b/.osk/workspace.yaml
+@@ -2,16 +2,45 @@ schema: osk.workspace/v0alpha1
+ blueprint:
+   id: default
+   version: 0.1.0
++
++# OSK:ROLES:BEGIN
++roles:
++  engineering-reviewer:
++    version: 0.1.0
++    installedPath: .osk/roles/engineering-reviewer
++    fingerprint: 44620fe6fdefdcb05a564db69951557517abe08165c2177a03a812694181c6a3
++    canonicalSHA256: 44620fe6fdefdcb05a564db69951557517abe08165c2177a03a812694181c6a3
++  knowledge-curator:
++    version: 0.1.0
++    installedPath: .osk/roles/knowledge-curator
++    fingerprint: 5c734b7c62a8ebf3f04d5882c316c140cf82dbe89499a34506336c08706f1b7e
++    canonicalSHA256: 5c734b7c62a8ebf3f04d5882c316c140cf82dbe89499a34506336c08706f1b7e
++  platform-engineer:
++    version: 0.1.0
++    installedPath: .osk/roles/platform-engineer
++    fingerprint: 3f0abf9d69c7ed6790a0ad86be48a03b47377b690a9876218c4aa76f8227fada
++    canonicalSHA256: 3f0abf9d69c7ed6790a0ad86be48a03b47377b690a9876218c4aa76f8227fada
++  qa-engineer:
++    version: 0.1.0
++    installedPath: .osk/roles/qa-engineer
++    fingerprint: 42e1f42f8823af35b43ef4ce3ad5b4e151051ca04f395d65ad1c01132ad42e02
++    canonicalSHA256: 42e1f42f8823af35b43ef4ce3ad5b4e151051ca04f395d65ad1c01132ad42e02
++  software-engineer:
++    version: 0.1.0
++    installedPath: .osk/roles/software-engineer
++    fingerprint: 1377954d2c4bf5f288d57ed22fb621b0c6ddc9a3327d481ae7252d810c44fa01
++    canonicalSHA256: 1377954d2c4bf5f288d57ed22fb621b0c6ddc9a3327d481ae7252d810c44fa01
++# OSK:ROLES:END
+ # OSK:SKILLS:BEGIN
+ skills:
+   osk-adversarial-analysis:
+     version: 0.1.0
+     category: architecture
+-    ownership: 
++    ownership: osk
+     catalogPath: architecture/osk-adversarial-analysis
+     installedPath: .osk/skills/osk-adversarial-analysis
+-    fingerprint: dab7f7dd62e4748821d53d062db5bfbf930d9b6094a2305181b41f5a691016ea
+-    canonicalSHA256: 
++    fingerprint: 39ac16afcf608098307e3df9cf930118a50cc5e72e379528379fd7a6a208ac89
++    canonicalSHA256: 39ac16afcf608098307e3df9cf930118a50cc5e72e379528379fd7a6a208ac89
+     adapters:
+       claude-code: installed
+       codex: installed
+@@ -28,26 +57,42 @@ skills:
+       claude-code: installed
+       codex: installed
+       opencode: installed
++  osk-architecture-review:
++    version: 0.1.0
++    category: architecture
++    ownership: osk
++    catalogPath: architecture/osk-architecture-review
++    installedPath: .osk/skills/osk-architecture-review
++    fingerprint: 1499aab46d5ccd75afe56987832d7d9d509279407fdd3c61e011c02d0f037633
++    canonicalSHA256: 1499aab46d5ccd75afe56987832d7d9d509279407fdd3c61e011c02d0f037633
+   osk-boundary-review:
+     version: 0.1.0
+     category: architecture
+-    ownership: 
++    ownership: osk
+     catalogPath: architecture/osk-boundary-review
+     installedPath: .osk/skills/osk-boundary-review
+-    fingerprint: 055deb757d921910df28a78df475e3ad4e56ca0fb671587c4dc1d7c71b630d5a
+-    canonicalSHA256: 
++    fingerprint: ff4b83f8341947b36b0db1bad28c9ccad439376f5ac822a074f40a0a73ff2dba
++    canonicalSHA256: ff4b83f8341947b36b0db1bad28c9ccad439376f5ac822a074f40a0a73ff2dba
+     adapters:
+       claude-code: already installed
+       codex: already installed
+       opencode: installed
++  osk-code-docs:
++    version: 0.1.0
++    category: documentation
++    ownership: osk
++    catalogPath: documentation/osk-code-docs
++    installedPath: .osk/skills/osk-code-docs
++    fingerprint: 98a3ea38b9a576330542c0ba32c66cdd06848a76defe9a3752dcfc0a97d78d8c
++    canonicalSHA256: 98a3ea38b9a576330542c0ba32c66cdd06848a76defe9a3752dcfc0a97d78d8c
+   osk-engineering-reporting:
+     version: 0.1.2
+     category: process
+     ownership: osk
+     catalogPath: process/osk-engineering-reporting
+     installedPath: .osk/skills/osk-engineering-reporting
+-    fingerprint: 622af742bf0f1895a800b8e89947e3312a99c0bb0df52f5ea8c8f04caae79ad9
+-    canonicalSHA256: 622af742bf0f1895a800b8e89947e3312a99c0bb0df52f5ea8c8f04caae79ad9
++    fingerprint: 6758ae0243b2b3f9da5e30ba0a1d1be8b99d0336ccbf0d37d7eb03ffcb7c5a17
++    canonicalSHA256: 6758ae0243b2b3f9da5e30ba0a1d1be8b99d0336ccbf0d37d7eb03ffcb7c5a17
+     adapters:
+       claude-code: already installed (adopted)
+       codex: already installed (adopted)
+@@ -56,28 +101,60 @@ skills:
+       claude-code: feb15d98f4016702f0eae76277881669491d8226a41f58e526097ba2ce3f3ff4
+       codex: 1423e8c376948769ad7f39ef31ef3a41a85e6d10c44aef9d0680e924058fcb75
+       opencode: 13a3a4bce7c8ba12b0809c7ee87a4182906397f0f7dc351a28548e993f2c6e0c
++  osk-execution-observability:
++    version: 0.1.0
++    category: process
++    ownership: osk
++    catalogPath: process/osk-execution-observability
++    installedPath: .osk/skills/osk-execution-observability
++    fingerprint: 8d140f1d105b0c3b153df8dff85a5a2f2c5bc3497e0582afdcf15a9bbc36f7a0
++    canonicalSHA256: 8d140f1d105b0c3b153df8dff85a5a2f2c5bc3497e0582afdcf15a9bbc36f7a0
++  osk-execution-timebox:
++    version: 0.1.0
++    category: process
++    ownership: osk
++    catalogPath: process/osk-execution-timebox
++    installedPath: .osk/skills/osk-execution-timebox
++    fingerprint: e28573765e6f319d2a5acf2df3ad8da1494347d2b3c78d4c63001bb26160cda3
++    canonicalSHA256: e28573765e6f319d2a5acf2df3ad8da1494347d2b3c78d4c63001bb26160cda3
+   osk-knowledge-curator:
+     version: 0.1.0
+     category: documentation
+-    ownership: 
++    ownership: osk
+     catalogPath: documentation/osk-knowledge-curator
+     installedPath: .osk/skills/osk-knowledge-curator
+-    fingerprint: adc32f26930855bf17eebcdc50adf0859f962df9ab12a8d65170b46ab8b71fca
+-    canonicalSHA256: 
++    fingerprint: 09504707180cc20ba0abd78b777c4e6268c8e79af990e89de0a3b671696b0fe1
++    canonicalSHA256: 09504707180cc20ba0abd78b777c4e6268c8e79af990e89de0a3b671696b0fe1
+     adapters:
+       claude-code: installed
+       codex: installed
+       opencode: installed
+-  osk-verification-engineering:
++  osk-knowledge-integrity-review:
+     version: 0.1.0
++    category: documentation
++    ownership: osk
++    catalogPath: documentation/osk-knowledge-integrity-review
++    installedPath: .osk/skills/osk-knowledge-integrity-review
++    fingerprint: 096b4dba1d97aca858e9e6eab81df96b9eca64601525d9b0af3f5b61f23d1de5
++    canonicalSHA256: 096b4dba1d97aca858e9e6eab81df96b9eca64601525d9b0af3f5b61f23d1de5
++  osk-verification-engineering:
++    version: 0.1.2
+     category: process
+-    ownership: 
++    ownership: osk
+     catalogPath: process/osk-verification-engineering
+     installedPath: .osk/skills/osk-verification-engineering
+-    fingerprint: 2c69663ed7921f428f38d5bb2f7c8aee3e0f18feee99ca642e4c2bbb2cbf6fb0
+-    canonicalSHA256: 
++    fingerprint: a76b5a30fd2e9e6cfc3dd8183b8f777d1067d089d011bf3bb0e81c89bf9be2a0
++    canonicalSHA256: a76b5a30fd2e9e6cfc3dd8183b8f777d1067d089d011bf3bb0e81c89bf9be2a0
+     adapters:
+       claude-code: already installed
+       codex: already installed
+       opencode: installed
+ # OSK:SKILLS:END
++# OSK:CAPABILITIES:BEGIN
++capabilities:
++  deterministic-verification:
++    version: 0.1.3
++    installedPath: .osk/capabilities/deterministic-verification
++    fingerprint: 5d0fa024f3933e0b1828f6be11f6b1442cf90c174137702c2bcaadb92d6a1699
++    canonicalSHA256: 5d0fa024f3933e0b1828f6be11f6b1442cf90c174137702c2bcaadb92d6a1699
++# OSK:CAPABILITIES:END
+diff --git a/CLAUDE.md b/CLAUDE.md
+index b78354a..6162c8f 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -36,10 +36,32 @@ mvn verify -DskipTests
+ 
+ Requires Java 25 (Temurin 25 recommended via SDKMAN). The build will fail explicitly on JDK < 25 — do not attempt to downgrade the `maven.compiler.release` property.
+ 
+-`argonaut-ui` is **not** part of the Maven reactor. It is a sibling directory for the future Vue.js frontend.
+-
+ Unit tests in framework modules use mock chat models — no real LLM call or network is required. To run a framework service locally against a real model, set the env vars from `.env.example` (`OPENROUTER_API_KEY`, `OPENROUTER_MODEL`, optionally `OPENROUTER_BASE_URL`).
+ 
++**argonaut-ui** is not part of the Maven reactor. Commands (run from `argonaut-ui/`):
++
++```bash
++npm install          # first-time setup
++npm run dev          # Vite dev server with HMR
++npm run test         # Vitest unit tests (single run)
++npm run test:watch   # Vitest in watch mode
++npm run build        # vue-tsc type-check + Vite production build
++```
++
++**Full-stack Docker Compose** (root `compose.yaml`) runs all six backend services + Qdrant + the UI together. Requires credentials from `.env.example`:
++
++```bash
++# Copy and fill in credentials
++cp .env.example .env
++
++# Build and start everything (first run takes a few minutes)
++docker compose up --build
++
++# UI → http://localhost:8080
++```
++
++The `argonaut-vector` module also ships its own `argonaut-vector/compose.yaml` (vector service + Qdrant only), useful when working on vector features in isolation.
++
+ ---
+ 
+ ## Architecture

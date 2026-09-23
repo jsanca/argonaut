@@ -1,0 +1,10 @@
+schema: osk.capability/v0alpha1
+id: coverage-measurement
+name: Coverage Measurement
+version: 0.1.0
+description: Acquire provider-backed coverage measurements for project-owned targets, retaining normalized findings and primary provider evidence without applying coverage policy.
+ownership: osk
+entryPoint: measure.sh
+configurationPath: .osk/coverage-measurement.yaml
+configurationSchema: osk.coverage-measurement/v0alpha1
+postInstallGuidance: post-install.md

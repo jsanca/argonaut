@@ -1,0 +1,9 @@
+schema: osk.capability/v0alpha1
+id: deterministic-verification
+name: Deterministic Verification
+version: 0.1.4
+description: Execute project-owned build and test commands with retained deterministic verification evidence; the battery can expand beyond its current build/test checks.
+ownership: osk
+entryPoint: verify.sh
+configurationPath: .osk/deterministic-verification.yaml
+postInstallGuidance: post-install.md
