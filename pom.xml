@@ -21,7 +21,7 @@
         <module>argonaut-koog</module>
         <module>argonaut-vector</module>
         <module>argonaut-decision</module>
-        <module>argonaut-decision-jev</module>
+        <module>argonaut-decision-systemone</module>
     </modules>
 
     <properties>
